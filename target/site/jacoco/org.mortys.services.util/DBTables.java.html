@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DBTables.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.services.util</a> &gt; <span class="el_source">DBTables.java</span></div><h1>DBTables.java</h1><pre class="source lang-java linenums">package org.mortys.services.util;
+
+<span class="nc" id="L3">public class DBTables {</span>
+    public static final String TAB_ADRESSE = &quot;dbs_tab_adresse&quot;;
+    public static final String TAB_USER = &quot;dbs_tab_user&quot;;
+    public static final String TAB_UNTERNEHMER = &quot;dbs_tab_unternehmer&quot;;
+    public static final String TAB_STUDENT = &quot;dbs_tab_student&quot;;
+    public static final String TAB_STELLENANZEIGE = &quot;dbs_tab_stellenanzeige&quot;;
+    public static final String TAB_U_ERSTELLT_ST = &quot;dbs_tab_unternehmer_erstellt_stellenanzeige&quot;;
+    public static final String TAB_FERTIGKEIT = &quot;dbs_tab_fertigkeit&quot;;
+    public static final String TAB_ST_FORDERT_F = &quot;dbs_tab_stellenanzeige_fordert_fertigkeit&quot;;
+    public static final String TAB_ST_HAT_F = &quot;dbs_tab_student_hat_fertigkeit&quot;;
+    public static final String TAB_STUDENT_BEWIRBT_ST = &quot;dbs_tab_student_bewirbt_sich_stellenanzeige&quot;;
+    public static final String TAB_USER_HAT_RESETCODE = &quot;dbs_tab_user_hat_resetcode&quot;;
+    public static final String TAB_STUDENT_TYPE = &quot;dbs_tab_student_type&quot;;
+    public static final String TAB_TOGGLE_CONFIGURATION = &quot;dbs_tab_toggle_configuration&quot;;
+
+
+<span class="nc" id="L19">    public class Creation {</span>
+
+        public static final String CREATE_TAB_ADRESSE = &quot;create table &quot; + TAB_ADRESSE +
+                &quot;(Addr_nr BIGSERIAL,\n&quot; +
+                &quot;PLZ char(5) not null,\n&quot; +
+                &quot;Ort varchar(35) not null,\n&quot; +
+                &quot;Street varchar(80) not null,\n&quot; +
+                &quot;h_nr numeric(4) not null,\n&quot; +
+                &quot;UNIQUE(plz,ort,street, h_nr),\n&quot; +
+                &quot;primary key (Addr_nr));&quot;;
+
+
+        public static final String CREATE_TAB_USER = &quot;create table &quot; + TAB_USER + &quot; (\n&quot; +
+                &quot;Anrede varchar(10),\n&quot; +
+                &quot;Geburtsdatum date,\n&quot; +
+                &quot;Nachname varchar(60),\n&quot; +
+                &quot;Vorname varchar(35),\n&quot; +
+                &quot;email varchar(300),\n&quot; +
+                &quot;Telefon varchar(15),\n&quot; +
+                &quot;regDate  timestamp default current_timestamp ,\n&quot; +
+                &quot;username varchar(30) not null,\n&quot; +
+                &quot;password varchar(30) not null,\n&quot; +
+                &quot;status varchar(10) ,\n&quot; +
+                &quot;avatar varchar(400) ,\n&quot; +
+                &quot;Adresse bigint REFERENCES &quot; + TAB_ADRESSE + &quot;(Addr_nr),\n&quot; +
+                &quot;primary key (email));&quot;;
+
+
+        public static final String CREATE_TAB_UNTERNEHMER = &quot;create table   &quot; + TAB_UNTERNEHMER + &quot;  (\n&quot; +
+                &quot;kunden_nr BIGSERIAL,\n&quot; +
+                &quot;email varchar(300) REFERENCES &quot; + TAB_USER + &quot;(email) not null,\n&quot; +
+                &quot;Firmenname varchar(60) not null,\n&quot; +
+                &quot;ustID varchar(30) ,\n&quot; +
+                &quot;IBAN char(22)     ,\n&quot; +
+                &quot;unique(email),\n&quot; +
+                &quot;primary key (kunden_nr));&quot;;
+
+
+        public static final String CREATE_TAB_STUDENT = &quot;create table &quot; + TAB_STUDENT + &quot; (\n&quot; +
+                &quot;matrikelNr varchar(22) not null,\n&quot; +
+                &quot;email varchar(300) REFERENCES &quot; + TAB_USER + &quot;(email) not null,\n&quot; +
+                &quot;type varchar(30),\n&quot; +
+                &quot;unique(email),\n&quot; +
+                &quot;primary key (matrikelNr));&quot;;
+
+
+        public static final String CREATE_TAB_STELLENANZEIGE = &quot;create table &quot; + TAB_STELLENANZEIGE + &quot; (\n&quot; +
+                &quot;id SERIAL ,\n&quot; +
+                &quot;titel varchar(30) not null,\n&quot; +
+                &quot;beschreibung varchar(300) ,\n&quot; +
+                &quot;status varchar(10),\n&quot; +
+                &quot;primary key (id));&quot;;
+
+
+        public static final String CREATE_TAB_STUDENT_BEWIRBT_ST = &quot;create table &quot; + TAB_STUDENT_BEWIRBT_ST + &quot; (\n&quot; +
+                &quot;student varchar(22) REFERENCES  &quot; + TAB_STUDENT + &quot;(matrikelNr)  not null,\n&quot; +
+                &quot;stellenanzeige bigint REFERENCES &quot; + TAB_STELLENANZEIGE + &quot;(id)  not null,\n&quot; +
+                &quot;nr BIGSERIAL,\n&quot; +
+                &quot;status varchar(10),\n&quot; +
+                &quot;primary key (stellenanzeige, student));&quot;;
+
+
+        public static final String CREATE_TAB_FERTIGKEIT = &quot;create table &quot; + TAB_FERTIGKEIT + &quot; (\n&quot; +
+                &quot;nr BIGSERIAL,\n&quot; +
+                &quot;Softskill varchar(30) not null,\n&quot; +
+                &quot;beschreibung varchar(100),\n&quot; +
+                &quot;unique(softskill,beschreibung),\n&quot; +
+                &quot;primary key (nr));&quot;;
+
+
+        public static final String CREATE_TAB_ST_FORDERT_F = &quot;create table &quot; + TAB_ST_FORDERT_F + &quot; (\n&quot; +
+                &quot;fertigkeit bigint REFERENCES &quot; + TAB_FERTIGKEIT + &quot;(nr),\n&quot; +
+                &quot;stellenanzeige bigint REFERENCES &quot; + TAB_STELLENANZEIGE + &quot;(id),\n&quot; +
+                &quot;primary key (fertigkeit, stellenanzeige));&quot;;
+
+
+        public static final String CREATE_TAB_ST_HAT_F = &quot;create table &quot; + TAB_ST_HAT_F + &quot; (\n&quot; +
+                &quot;student varchar(22) REFERENCES &quot; + TAB_STUDENT + &quot;(matrikelNr),\n&quot; +
+                &quot;fertigkeit bigint REFERENCES &quot; + TAB_FERTIGKEIT + &quot;(nr),\n&quot; +
+                &quot;primary key (fertigkeit,  student));&quot;;
+
+
+        public static final String CREATE_TAB_U_ERSTELLT_ST = &quot;create table &quot; + TAB_U_ERSTELLT_ST + &quot; (\n&quot; +
+                &quot;unternehmer bigint REFERENCES &quot; + TAB_UNTERNEHMER + &quot;(kunden_nr),\n&quot; +
+                &quot;stellenanzeige bigint REFERENCES &quot; + TAB_STELLENANZEIGE + &quot;(id),\n&quot; +
+                &quot;erstelldatum timestamp default current_timestamp,\n&quot; +
+                &quot;primary key (stellenanzeige, erstelldatum));&quot;;
+
+        public static final String CREATE_TAB_USER_HAT_RESETCODE = &quot;create table &quot; + TAB_USER_HAT_RESETCODE + &quot;  (\n&quot; +
+                &quot;email varchar(300) REFERENCES &quot; + TAB_USER + &quot;(email) not null,\n&quot; +
+                &quot;code character(6) not null,\n&quot; +
+                &quot;erstellt timestamp default current_timestamp ,\n&quot; +
+                &quot;unique(email),\n&quot; +
+                &quot;primary key (email));&quot;;
+
+        public static final String CREATE_TAB_TOGGLE_CONFIGURATION = &quot;create table &quot; + TAB_TOGGLE_CONFIGURATION + &quot; (\n&quot; +
+                &quot;feature varchar(100) not null, \n&quot; +
+                &quot;status boolean not null, \n&quot; +
+                &quot;caption varchar(300),&quot; +
+                &quot;primary key (feature));&quot;;
+
+
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

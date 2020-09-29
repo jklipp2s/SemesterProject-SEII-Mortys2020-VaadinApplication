@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">UserDAO.java</span></div><h1>UserDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Address;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+<span class="fc" id="L19">public class UserDAO extends AbstractDAO {</span>
+    private static UserDAO userDAO;
+<span class="fc" id="L21">    private String table = DBTables.TAB_USER;</span>
+
+    public static synchronized UserDAO getInstance() {
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (userDAO == null) userDAO = new UserDAO();</span>
+
+<span class="fc" id="L27">        return userDAO;</span>
+    }
+
+    public Boolean resultGetter(PreparedStatement statement, int index, String condition) throws DatabaseException {
+<span class="fc" id="L31">        ResultSet resultSet = null;</span>
+<span class="fc" id="L32">        boolean exists = false;</span>
+
+        try {
+<span class="fc" id="L35">            statement.setString(index,condition);</span>
+<span class="fc" id="L36">            resultSet = statement.executeQuery();</span>
+<span class="fc" id="L37">            exists = resultSet.next();</span>
+        }
+<span class="nc" id="L39">        catch (SQLException e) {</span>
+<span class="nc" id="L40">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L42">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L43" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) {</span>
+<span class="nc" id="L44">                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, exc);</span>
+<span class="pc" id="L45">            }</span>
+<span class="nc" id="L46">        }</span>
+<span class="fc" id="L47">        return exists;</span>
+    }
+
+
+    // PERSIST-METHODEN -START -----------------------------------------------------------------------------------------
+
+    public void registerUser(User user, String password) throws DatabaseException {
+<span class="fc" id="L54">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L55">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(null,null,null,null,?,null,default,?,?,null,null)&quot;;</span>
+<span class="fc" id="L56">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+
+<span class="fc" id="L60">            statement.setString(1, user.getEmail());</span>
+<span class="fc" id="L61">            statement.setString(2, user.getUsername());</span>
+<span class="fc" id="L62">            statement.setString(3, password);</span>
+
+<span class="fc" id="L64">            statement.executeUpdate();</span>
+
+<span class="fc" id="L66">            user.setRegistrationDate(getRegistrationDate(user));</span>
+
+<span class="nc" id="L68">        } catch (SQLException e) {</span>
+<span class="nc" id="L69">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">    }</span>
+
+    protected void prepersistUser(User user, Address address, String password) throws DatabaseException {
+
+<span class="fc" id="L75">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L76">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?,?,?,?,?,DEFAULT,?,?,?,?,?)&quot;;</span>
+<span class="fc" id="L77">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L80">            statement.setString(1, user.getAnrede());</span>
+<span class="fc" id="L81">            statement.setDate(2, Date.valueOf(user.getGeburtsdatum()));</span>
+<span class="fc" id="L82">            statement.setString(3, user.getNachname());</span>
+<span class="fc" id="L83">            statement.setString(4, user.getVorname());</span>
+<span class="fc" id="L84">            statement.setString(5, user.getEmail());</span>
+<span class="fc" id="L85">            statement.setString(6, user.getTelefon());</span>
+<span class="fc" id="L86">            statement.setString(7, user.getUsername());</span>
+<span class="fc" id="L87">            statement.setString(8, password);</span>
+<span class="fc" id="L88">            statement.setString(9, user.getStatus());</span>
+<span class="fc" id="L89">            statement.setString(10, user.getAvatar());</span>
+<span class="fc" id="L90">            statement.setString(11, null);</span>
+
+<span class="fc" id="L92">            int adressId = AddressDAO.getInstance().persistAddress(address);</span>
+
+<span class="fc" id="L94">            statement.setInt(11, adressId);</span>
+
+<span class="fc" id="L96">            user.setRegistrationDate(getRegistrationDate(user));</span>
+
+<span class="fc" id="L98">            statement.executeUpdate();</span>
+
+
+
+<span class="nc" id="L102">        } catch (SQLException e) {</span>
+<span class="nc" id="L103">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">    }</span>
+
+    // PERSIST-METHODEN -END
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    protected LocalDate getRegistrationDate(User user) {
+
+<span class="fc" id="L113">        ResultSet resultSet = null;</span>
+        /*
+        String sqlBefehl = &quot;SELECT regdate FROM &quot; + table + &quot; WHERE email = '&quot; + user.getEmail() +
+                &quot;';&quot;;
+         */
+<span class="fc" id="L118">        String sqlBefehl = &quot;SELECT regdate FROM &quot; + table + &quot; WHERE email = ?;&quot;;</span>
+<span class="fc" id="L119">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="fc" id="L121">        LocalDate localDate = null;</span>
+
+        try {
+<span class="fc" id="L124">            statement.setString(1,user.getEmail());</span>
+<span class="fc" id="L125">            resultSet = statement.executeQuery();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if(resultSet.next())</span>
+<span class="fc" id="L127">            localDate = resultSet.getDate(1).toLocalDate();</span>
+
+<span class="nc" id="L129">        } catch (SQLException e) {</span>
+<span class="nc" id="L130">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L132" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L133">        }</span>
+
+<span class="fc" id="L135">        return localDate;</span>
+
+    }
+    // HILFSMETHODEN -END
+
+    // PRÜFMETHODEN -START ----------------------------------------------------------------------------------------------
+
+    public boolean emailIsAlreadyInUse(String email) throws DatabaseException {
+<span class="fc" id="L143">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L144">        ResultSet resultSet = null;</span>
+<span class="fc" id="L145">        boolean exists = false;</span>
+        //String sqlBefehl = &quot;SELECT email  FROM &quot; + table + &quot; WHERE email = '&quot; + email + &quot;';&quot;;
+<span class="fc" id="L147">        String sqlBefehl = &quot;SELECT email  FROM &quot; + table + &quot; WHERE email = ?;&quot;;</span>
+
+<span class="fc" id="L149">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+
+<span class="fc" id="L152">        return resultGetter(statement,1,email);</span>
+    }
+
+    public boolean usernameIsAlreadyInUse(String username) throws DatabaseException {
+<span class="fc" id="L156">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L157">        ResultSet resultSet = null;</span>
+<span class="fc" id="L158">        boolean exists = false;</span>
+        //String sqlBefehl = &quot;SELECT username  FROM &quot; + table + &quot; WHERE username = '&quot; + username + &quot;';&quot;;
+<span class="fc" id="L160">        String sqlBefehl = &quot;SELECT username  FROM &quot; + table + &quot; WHERE username = ?;&quot;;</span>
+<span class="fc" id="L161">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="fc" id="L163">        return resultGetter(statement, 1, username);</span>
+    }
+
+
+    public boolean isPasswordCorrect(String email, String password) throws DatabaseException {
+<span class="fc" id="L168">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L169">        ResultSet resultSet = null;</span>
+
+        /*
+        String sqlBefehl = &quot;SELECT email  FROM &quot; + table + &quot; WHERE email ILIKE '&quot; + email + &quot;'&quot; +
+                &quot;AND password = '&quot; + password + &quot;';&quot;;
+         */
+<span class="fc" id="L175">        String sqlBefehl = &quot;SELECT email  FROM &quot; + table + &quot; WHERE email ILIKE ? AND password = ?;&quot;;</span>
+<span class="fc" id="L176">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="fc" id="L178">        boolean result = false;</span>
+        try {
+<span class="fc" id="L180">            statement.setString(1,email);</span>
+<span class="nc" id="L181">        } catch (SQLException throwables) {</span>
+<span class="nc" id="L182">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, throwables);</span>
+<span class="fc" id="L183">        }</span>
+<span class="fc" id="L184">        return resultGetter(statement,2,password);</span>
+
+    }
+
+
+    public boolean isStudent(String email) throws DatabaseException {
+<span class="fc" id="L190">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L191">        ResultSet resultSet = null;</span>
+
+        /*
+           String sqlBefehl = &quot;SELECT u.email  FROM &quot; + table + &quot; u, &quot; + DBTables.TAB_STUDENT + &quot; s WHERE u.email = '&quot; + email + &quot;'\n&quot; +
+                &quot;AND u.email = s.email;&quot;;
+         */
+<span class="fc" id="L197">        String sqlBefehl = &quot;SELECT u.email  FROM &quot; + table + &quot; u, &quot; + DBTables.TAB_STUDENT + &quot; s WHERE u.email = ? AND u.email = s.email;&quot;;</span>
+
+<span class="fc" id="L199">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="fc" id="L201">        boolean result = false;</span>
+<span class="fc" id="L202">        return resultGetter(statement,1,email);</span>
+    }
+
+
+    public boolean isUnternehmer(String email) throws DatabaseException {
+<span class="fc" id="L207">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L208">        ResultSet resultSet = null;</span>
+
+        /*
+        String sqlBefehl = &quot;SELECT u.email  FROM &quot; + table + &quot; u, &quot; + DBTables.TAB_UNTERNEHMER + &quot; un WHERE u.email = '&quot; + email + &quot;'\n&quot; +
+                &quot;AND u.email = un.email;&quot;;
+         */
+
+<span class="fc" id="L215">        String sqlBefehl = &quot;SELECT u.email  FROM &quot; + table + &quot; u, &quot; + DBTables.TAB_UNTERNEHMER + &quot; un WHERE u.email = ? AND u.email = un.email;&quot;;</span>
+
+<span class="fc" id="L217">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="fc" id="L219">        boolean result = false;</span>
+<span class="fc" id="L220">        return resultGetter(statement,1,email);</span>
+    }
+
+    // PRÜFMETHODEN -END
+
+
+
+    // SETTERMETHODEN -START -----------------------------------------------------------------------------------------------
+    // Setter Method's bitte für die ProfilPage verwenden
+    // Bitte auch immer checken ob die Bedingungen -&gt; TABLECONSTRAINTS, USE-CASE-ANFORDERUNGEN  &lt;- erfüllt sind
+
+    public void setAnrede(User user, String anrede) throws DatabaseException {
+<span class="fc" id="L232">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L233">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET anrede = '&quot; + anrede + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L234">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L235">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L238">            statement.executeUpdate();</span>
+<span class="fc" id="L239">            System.out.println(&quot;Anrede geändert.&quot;);</span>
+<span class="nc" id="L240">        } catch (SQLException e) {</span>
+<span class="nc" id="L241">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L243">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L244">        }</span>
+
+<span class="fc" id="L246">    }</span>
+
+
+    public void setGeburtsDatum(User user, LocalDate localDate) throws DatabaseException {
+<span class="fc" id="L250">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L251">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET geburtsdatum = '&quot; + Date.valueOf(localDate) + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L252">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L253">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L256">            statement.executeUpdate();</span>
+<span class="fc" id="L257">            System.out.println(&quot;GeburtsDatum geändert.&quot;);</span>
+<span class="nc" id="L258">        } catch (SQLException e) {</span>
+<span class="nc" id="L259">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L261">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L262">        }</span>
+
+<span class="fc" id="L264">    }</span>
+
+
+
+
+    public void changeEmail(User user, String email, boolean isUnternehmer) throws DatabaseException {
+<span class="fc" id="L270">        JDBCConnection.getInstance().openConnection();</span>
+
+
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        String sqlBefehl = isUnternehmer ? &quot;ALTER TABLE &quot; + DBTables.TAB_UNTERNEHMER + &quot; ALTER COLUMN  email DROP not null;\n&quot;</span>
+                : &quot;ALTER TABLE &quot; + DBTables.TAB_STUDENT + &quot; ALTER COLUMN  email DROP not null;\n&quot;;
+
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        sqlBefehl += isUnternehmer ? &quot;UPDATE &quot; + DBTables.TAB_UNTERNEHMER + &quot; SET email = null WHERE email = '&quot;</span>
+<span class="fc" id="L277">                + user.getEmail() + &quot;';\n\n\n&quot; : &quot;&quot; +</span>
+                &quot;UPDATE &quot; + DBTables.TAB_STUDENT + &quot; SET email = null WHERE email = '&quot;
+<span class="fc" id="L279">                + user.getEmail() + &quot;';\n\n\n&quot;;</span>
+
+<span class="fc" id="L281">        sqlBefehl += &quot;UPDATE &quot; + table + &quot; SET email = '&quot; + email + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L282">                + user.getEmail() + &quot;';&quot;;</span>
+
+
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        sqlBefehl += isUnternehmer ? &quot;UPDATE &quot; + DBTables.TAB_UNTERNEHMER + &quot; SET email = '&quot; + email + &quot;' WHERE kunden_nr = '&quot;</span>
+<span class="fc" id="L286">                + ((Unternehmer) user).getKundennummer() + &quot;';\n\n\n&quot; : &quot;&quot; +</span>
+                &quot;UPDATE &quot; + DBTables.TAB_STUDENT + &quot; SET email = '&quot; + email + &quot;' WHERE matrikelnr = '&quot;
+<span class="fc" id="L288">                + ((Student) user).getMatrikelnr() + &quot;';\n\n\n&quot;;</span>
+
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        sqlBefehl += isUnternehmer ? &quot;ALTER TABLE &quot; + DBTables.TAB_UNTERNEHMER + &quot; ALTER COLUMN  email SET not null;&quot;</span>
+                : &quot;ALTER TABLE &quot; + DBTables.TAB_STUDENT + &quot; ALTER COLUMN  email SET not null;&quot;;
+
+<span class="fc" id="L293">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L296">            statement.executeUpdate();</span>
+<span class="fc" id="L297">            System.out.println(&quot;Email geändert.&quot;);</span>
+<span class="nc" id="L298">        } catch (SQLException e) {</span>
+<span class="nc" id="L299">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L301">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L302">        }</span>
+<span class="fc" id="L303">    }</span>
+
+
+    public void setNachname(User user, String nachname) throws DatabaseException {
+<span class="fc" id="L307">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L308">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET nachname = '&quot; + nachname + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L309">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L310">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L313">            statement.executeUpdate();</span>
+<span class="fc" id="L314">            System.out.println(&quot;Nachname geändert.&quot;);</span>
+<span class="nc" id="L315">        } catch (SQLException e) {</span>
+<span class="nc" id="L316">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L318">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L319">        }</span>
+
+<span class="fc" id="L321">    }</span>
+
+    public void setVorname(User user, String vorname) throws DatabaseException {
+<span class="fc" id="L324">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L325">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET vorname = '&quot; + vorname + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L326">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L327">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L330">            statement.executeUpdate();</span>
+<span class="fc" id="L331">            System.out.println(&quot;Vorname geändert.&quot;);</span>
+<span class="nc" id="L332">        } catch (SQLException e) {</span>
+<span class="nc" id="L333">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L335">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L336">        }</span>
+
+<span class="fc" id="L338">    }</span>
+
+
+    public void setTelefon(User user, String telefon) throws DatabaseException {
+<span class="fc" id="L342">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L343">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET telefon = '&quot; + telefon + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L344">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L345">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L348">            statement.executeUpdate();</span>
+<span class="fc" id="L349">            System.out.println(&quot;Telefonnummer geändert.&quot;);</span>
+<span class="nc" id="L350">        } catch (SQLException e) {</span>
+<span class="nc" id="L351">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L353">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L354">        }</span>
+
+<span class="fc" id="L356">    }</span>
+
+    public void setAvatar(User user, String avatar) throws DatabaseException{
+<span class="fc" id="L359">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L360">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET avatar = '&quot; + avatar + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L361">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L362">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L365">            statement.executeUpdate();</span>
+<span class="fc" id="L366">            System.out.println(&quot;Avatar geändert.&quot;);</span>
+<span class="nc" id="L367">        } catch (SQLException e) {</span>
+<span class="nc" id="L368">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L370">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L371">        }</span>
+<span class="fc" id="L372">    }</span>
+
+
+    public void changeUsername(User user, String username) throws DatabaseException {
+<span class="fc" id="L376">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L377">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET username = '&quot; + username + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L378">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L379">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L381">            statement.executeUpdate();</span>
+<span class="fc" id="L382">            System.out.println(&quot;Username geändert.&quot;);</span>
+<span class="nc" id="L383">        } catch (SQLException e) {</span>
+<span class="nc" id="L384">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L386">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L387">        }</span>
+<span class="fc" id="L388">    }</span>
+
+
+    public void changePassword(User user, String password) throws DatabaseException {
+<span class="fc" id="L392">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L393">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET password = '&quot; + password + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L394">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L395">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L397">            statement.executeUpdate();</span>
+<span class="fc" id="L398">            System.out.println(&quot;Password geändert.&quot;);</span>
+<span class="nc" id="L399">        } catch (SQLException e) {</span>
+<span class="nc" id="L400">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L402">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L403">        }</span>
+<span class="fc" id="L404">    }</span>
+
+    public void setStatus(User user, String satus) throws DatabaseException {
+<span class="fc" id="L407">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L408">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET status = '&quot; + satus + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L409">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L410">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L413">            statement.executeUpdate();</span>
+<span class="fc" id="L414">            System.out.println(&quot;Status geändert.&quot;);</span>
+<span class="nc" id="L415">        } catch (SQLException e) {</span>
+<span class="nc" id="L416">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L418">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L419">        }</span>
+<span class="fc" id="L420">    }</span>
+
+    public void setAdresse(User user, Address adresse) throws DatabaseException {
+<span class="fc" id="L423">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L424">        int adressid = AddressDAO.getInstance().persistAddress(adresse);</span>
+<span class="fc" id="L425">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET adresse = &quot; + adressid + &quot; WHERE email = '&quot;</span>
+<span class="fc" id="L426">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L427">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L429">            statement.executeUpdate();</span>
+<span class="fc" id="L430">            System.out.println(&quot;Adresse geändert.&quot;);</span>
+<span class="nc" id="L431">        } catch (SQLException e) {</span>
+<span class="nc" id="L432">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L434">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L435">        }</span>
+<span class="fc" id="L436">    }</span>
+
+    // SETTERMETHODEN -END
+
+   // LOESCHMETHODEN -START -----------------------------------------------------------------------------------------------
+
+    public void removeUser(User user) throws DatabaseException {
+<span class="fc" id="L443">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc bfc" id="L445" title="All 2 branches covered.">        String sqlBefehl = user instanceof Unternehmer ? &quot;DELETE FROM &quot; + DBTables.TAB_U_ERSTELLT_ST + &quot; WHERE unternehmer = '&quot; +</span>
+<span class="fc" id="L446">                ((Unternehmer) user).getKundennummer() + &quot;';\n&quot; +</span>
+                &quot;DELETE FROM &quot; + DBTables.TAB_UNTERNEHMER + &quot; WHERE email = '&quot; +
+<span class="fc" id="L448">                user.getEmail() + &quot;';\n&quot; +</span>
+                &quot;UPDATE &quot; + DBTables.TAB_STELLENANZEIGE + &quot; s SET status = 'deleted' where not exists (Select  &quot; +
+                &quot;from &quot; + DBTables.TAB_U_ERSTELLT_ST  + &quot;\n&quot; +
+                &quot;WHERE stellenanzeige = s.id);\n&quot; +
+                &quot;UPDATE &quot; + DBTables.TAB_STUDENT_BEWIRBT_ST + &quot; s SET status = 'deleted' where not exists (Select  &quot; +
+                &quot;from &quot; + DBTables.TAB_U_ERSTELLT_ST  + &quot;\n&quot; +
+                &quot;WHERE stellenanzeige = s.stellenanzeige);\n&quot;
+                                        :
+<span class="fc" id="L456">                &quot;DELETE FROM &quot; + DBTables.TAB_STUDENT_BEWIRBT_ST + &quot; WHERE student = '&quot; + ((Student) user).getMatrikelnr() + &quot;';\n&quot; +</span>
+<span class="fc" id="L457">                        &quot;DELETE FROM &quot; + DBTables.TAB_ST_HAT_F + &quot; WHERE student = '&quot; + ((Student) user).getMatrikelnr() + &quot;';\n&quot; +</span>
+                        &quot;DELETE FROM &quot; + DBTables.TAB_STUDENT + &quot; WHERE email = '&quot; +
+<span class="fc" id="L459">                        user.getEmail() + &quot;';\n&quot;;</span>
+
+
+<span class="fc" id="L462">        sqlBefehl += &quot;DELETE FROM &quot; + table + &quot; WHERE email = '&quot;</span>
+<span class="fc" id="L463">                + user.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L464">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L466">            statement.executeUpdate();</span>
+<span class="fc" id="L467">            System.out.println(&quot;User &quot; + user.getUsername() + &quot; aus der Datenbank enfernt.&quot;);</span>
+<span class="nc" id="L468">        } catch (SQLException e) {</span>
+<span class="nc" id="L469">            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L471">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L472">        }</span>
+<span class="fc" id="L473">    }</span>
+
+    // LOESCHMETHODEN -END
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

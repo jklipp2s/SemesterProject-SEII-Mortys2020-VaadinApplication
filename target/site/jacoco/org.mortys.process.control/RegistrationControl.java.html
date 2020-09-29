@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegistrationControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.process.control</a> &gt; <span class="el_source">RegistrationControl.java</span></div><h1>RegistrationControl.java</h1><pre class="source lang-java linenums">package org.mortys.process.control;
+
+import org.mortys.model.dao.StudentDAO;
+import org.mortys.model.dao.UnternehmerDAO;
+import org.mortys.model.dao.UserDAO;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.UserDTO;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.exception.RegisterFailException;
+
+<span class="nc" id="L12">public class RegistrationControl {</span>
+
+
+
+    public static boolean register(UserDTO userDTO) throws DatabaseException, RegisterFailException {
+
+<span class="fc" id="L18">        String exception = &quot;&quot;;</span>
+
+<span class="pc bpc" id="L20" title="1 of 4 branches missed.">        if (UserDAO.getInstance().emailIsAlreadyInUse(userDTO.getEmail())) exception += &quot;Email wurde schon verwendet\n&quot;;        if (userDTO.getPassword().length() &gt; 30) exception += &quot;Passwort ist zu lang\n&quot;;</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (userDTO.getEmail().length() &gt; 300) exception += &quot;Emailadresse ist zu lang\n\n&quot;;</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        if (userDTO.getUsername().length() &gt; 30) exception += &quot;Username ist zu lang\n\n&quot;;</span>
+<span class="fc bfc" id="L23" title="All 4 branches covered.">        if (!userDTO.isUnternehmer() &amp;&amp; userDTO.getMatrnr().length() &gt; 22) exception += &quot;Matrikelnummer ist zu lang\n\n&quot;;</span>
+<span class="pc bpc" id="L24" title="1 of 4 branches missed.">        if (userDTO.isUnternehmer() &amp;&amp; userDTO.getFirma().length() &gt; 60) exception += &quot;Firmenname ist zu lang\n\n&quot;;</span>
+
+
+
+
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        if ( userDTO.getEmail().isEmpty() || userDTO.getPassword().isEmpty()</span>
+<span class="pc bpc" id="L30" title="2 of 8 branches missed.">        ||  userDTO.isUnternehmer() &amp;&amp; userDTO.getFirma().isEmpty() ||  !userDTO.isUnternehmer() &amp;&amp; userDTO.getMatrnr().isEmpty() ){</span>
+<span class="nc" id="L31">            exception += &quot;\nBitte fülle alle Felder aus\n\n&quot;;</span>
+        }
+
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">        if (userDTO.getPassword().length() &lt; 8 &amp;&amp; !userDTO.getPassword().isEmpty()) exception += &quot;Dein Passwort muss mindestens 8 Zeichen lang sein\n\n&quot;;</span>
+
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (exception.isEmpty()) {</span>
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">         if(userDTO.isUnternehmer()) {</span>
+<span class="fc" id="L39">             Unternehmer unternehmer = new Unternehmer();</span>
+<span class="fc" id="L40">             unternehmer.setEmail(userDTO.getEmail());</span>
+<span class="fc" id="L41">             unternehmer.setUsername(userDTO.getUsername());</span>
+<span class="fc" id="L42">             unternehmer.setFirmenname(userDTO.getFirma());</span>
+<span class="fc" id="L43">             UnternehmerDAO.getInstance().registerUnternehmer(unternehmer,userDTO.getPassword());</span>
+<span class="fc" id="L44">         } else {</span>
+<span class="fc" id="L45">             Student student = new Student();</span>
+<span class="fc" id="L46">             student.setEmail(userDTO.getEmail());</span>
+<span class="fc" id="L47">             student.setUsername(userDTO.getUsername());</span>
+<span class="fc" id="L48">             student.setMatrikelnr(userDTO.getMatrnr());</span>
+<span class="fc" id="L49">             StudentDAO.getInstance().registerStudent(student,userDTO.getPassword());</span>
+         }
+<span class="fc" id="L51">            return true;</span>
+        } else {
+
+<span class="fc" id="L54">            RegisterFailException ex = new RegisterFailException();</span>
+<span class="fc" id="L55">            ex.setReason(exception);</span>
+<span class="fc" id="L56">            throw ex;</span>
+        }
+
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

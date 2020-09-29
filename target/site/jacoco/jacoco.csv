@@ -1,0 +1,81 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Mortys,org.mortys.gui.components,ImageUpload,132,0,6,0,31,0,5,0,2,0
+Mortys,org.mortys.gui.components,ApplicationBody,108,0,0,0,25,0,5,0,5,0
+Mortys,org.mortys.gui.components,ApplicationList,165,0,2,0,42,0,7,0,6,0
+Mortys,org.mortys.gui.components,Footer,27,0,0,0,9,0,1,0,1,0
+Mortys,org.mortys.gui.components,ProfileLabel,376,0,22,0,69,0,14,0,3,0
+Mortys,org.mortys.gui.components,CheckBoxFeature,96,0,22,0,19,0,16,0,5,0
+Mortys,org.mortys.gui.components,GridCallbackValueProvider,64,0,6,0,18,0,6,0,3,0
+Mortys,org.mortys.gui.components,ImageUpload.new Upload.StartedListener() {...},26,0,2,0,5,0,3,0,2,0
+Mortys,org.mortys.gui.components,ImageUpload.new Upload.ProgressListener() {...},25,0,2,0,5,0,3,0,2,0
+Mortys,org.mortys.gui.components,Header,184,0,10,0,33,0,7,0,2,0
+Mortys,org.mortys.gui.components,ProfileFields,706,0,18,0,135,0,37,0,28,0
+Mortys,org.mortys.gui.components,TextFieldWithIcon,176,0,8,0,41,0,13,0,9,0
+Mortys,org.mortys.gui.components,Header.new MenuBar.Command() {...},11,0,0,0,3,0,2,0,2,0
+Mortys,org.mortys.gui.components,Header.new MenuBar.Command() {...},11,0,0,0,3,0,2,0,2,0
+Mortys,org.mortys.gui.components,ImageUpload.new Upload.Receiver() {...},119,0,4,0,23,0,5,0,3,0
+Mortys,org.mortys.gui.components,Header.new MenuBar.Command() {...},8,0,0,0,3,0,2,0,2,0
+Mortys,org.mortys.process.control,LoginControl,236,42,22,4,61,12,19,2,7,1
+Mortys,org.mortys.process.control,RegistrationControl,39,165,8,28,2,26,9,11,1,1
+Mortys,org.mortys.process.control,UserControl,56,14,6,0,15,5,6,2,3,2
+Mortys,org.mortys.process.control,ToggleControl,150,0,8,0,49,0,14,0,10,0
+Mortys,org.mortys.process.control,SearchControl,0,23,0,2,0,5,0,5,0,4
+Mortys,org.mortys.process.control,ToggleControl.new HasValue.ValueChangeListener() {...},38,0,2,0,4,0,3,0,2,0
+Mortys,org.mortys.services.db,JDBCConnection,62,82,0,6,16,30,0,11,0,8
+Mortys,org.mortys.services.db.databasecreation,DataBaseCreation,77,0,0,0,31,0,3,0,3,0
+Mortys,org.mortys.services.util,DAOfetcherForStudUntBewerbtErstelltStellenanzeige,60,61,6,4,6,17,5,2,1,1
+Mortys,org.mortys.services.util,BeschäftigungsArt,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,DBTables,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,PasswordResetData.LimitUnit,48,0,0,0,2,0,4,0,4,0
+Mortys,org.mortys.services.util,UserFetcher,29,0,2,0,8,0,3,0,2,0
+Mortys,org.mortys.services.util,DBTables.Creation,6,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,MailMsgTemplates,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,DBViews.Creation,6,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,OtherMethods,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,PasswordResetData,7,0,0,0,2,0,2,0,2,0
+Mortys,org.mortys.services.util,Views,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,Roles,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.util,DBViews,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.model.objects.dto,StellenAnzeige,81,52,8,0,19,16,7,15,3,15
+Mortys,org.mortys.model.objects.dto,Fertigkeit,0,17,0,0,0,5,0,5,0,5
+Mortys,org.mortys.model.objects.dto,Unternehmer,18,31,0,0,5,9,2,9,2,9
+Mortys,org.mortys.model.objects.dto,Address,0,31,0,0,0,9,0,9,0,9
+Mortys,org.mortys.model.objects.dto,Student,87,17,6,0,20,6,8,5,5,5
+Mortys,org.mortys.model.objects.dto,User,18,84,0,0,2,26,2,24,2,24
+Mortys,org.mortys.model.objects.dto,UserDTO,0,45,0,0,0,13,0,13,0,13
+Mortys,org.mortys.model.dao,UnternehmerErstelltStellenAnzeigeDAO,92,219,13,7,12,53,9,8,0,7
+Mortys,org.mortys.model.dao,UserDAO,293,998,10,16,37,208,6,30,0,23
+Mortys,org.mortys.model.dao,UnternehmerDAO,357,413,25,9,59,90,16,12,2,9
+Mortys,org.mortys.model.dao,StudentDAO,324,524,47,27,29,98,32,15,1,9
+Mortys,org.mortys.model.dao,UserHatResetCodeDAO,262,0,2,0,58,0,10,0,9,0
+Mortys,org.mortys.model.dao,AddressDAO,163,262,22,12,24,61,14,10,0,7
+Mortys,org.mortys.model.dao,StudentBewirbtStellenAnzeigeDAO,80,185,7,5,13,45,5,7,0,6
+Mortys,org.mortys.model.dao,StellenAnzeigeFordertFertigkeitDAO,112,137,12,8,19,37,8,7,0,5
+Mortys,org.mortys.model.dao,FeatureDAO,502,0,34,0,105,0,26,0,9,0
+Mortys,org.mortys.model.dao,FertigkeitDAO,133,170,17,9,20,41,11,8,0,6
+Mortys,org.mortys.model.dao,AbstractDAO,16,20,0,0,4,9,0,3,0,3
+Mortys,org.mortys.model.dao,StellenAnzeigeDAO,204,378,24,16,17,81,18,12,0,10
+Mortys,org.mortys.model.dao,StudentHatFertigkeitDAO,111,166,11,7,18,37,7,7,0,5
+Mortys,org.mortys.process.control.proxy,SearchProxy,0,23,0,2,0,5,0,5,0,4
+Mortys,examples,FeatureToggleExample,26,0,2,0,7,0,3,0,2,0
+Mortys,examples,EmailExample,30,0,2,0,9,0,3,0,2,0
+Mortys,org.mortys.gui.views,MainView,127,0,0,0,37,0,5,0,5,0
+Mortys,org.mortys.gui.views,LoginView,264,0,2,0,74,0,7,0,6,0
+Mortys,org.mortys.gui.views,SearchView,929,0,56,0,180,0,42,0,14,0
+Mortys,org.mortys.gui.views,RegistrationView,625,0,32,0,151,0,27,0,11,0
+Mortys,org.mortys.gui.views,StelleAusschreibenView,320,0,10,0,80,0,11,0,6,0
+Mortys,org.mortys.gui.views,ProfileView,771,0,82,0,129,0,50,0,9,0
+Mortys,org.mortys.gui.windows,StellenAnzeigeSelectWindow,172,0,0,0,25,0,1,0,1,0
+Mortys,org.mortys.gui.windows,StudentSelectWindow,310,0,6,0,39,0,5,0,2,0
+Mortys,org.mortys.gui.windows,DeleteUserConfirmationWindow,25,82,2,0,7,22,3,1,2,1
+Mortys,org.mortys.gui.windows,UserDeletedWindow,45,0,0,0,12,0,2,0,2,0
+Mortys,org.mortys.gui.windows,RegistrationSuccessWindow,77,0,0,0,22,0,2,0,2,0
+Mortys,org.mortys.gui.ui,MyUI,38,0,0,0,10,0,2,0,2,0
+Mortys,org.mortys.gui.ui,MyUI.MyUIServlet,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.mail,Zugangsdaten,3,0,0,0,1,0,1,0,1,0
+Mortys,org.mortys.services.mail,MailSenderConnection,190,0,6,0,50,0,12,0,9,0
+Mortys,org.mortys.services.mail,MailSenderConnection.new Authenticator() {...},20,0,0,0,2,0,2,0,2,0
+Mortys,org.mortys.process.control.exception,RegisterFailException,3,7,0,0,1,2,1,2,1,2
+Mortys,org.mortys.process.control.exception,NoSuchUserOrPassword,7,9,0,0,3,4,2,1,2,1
+Mortys,org.mortys.process.control.exception,UserNotFoundException,4,0,0,0,2,0,1,0,1,0
+Mortys,org.mortys.process.control.exception,DatabaseException,16,0,0,0,7,0,3,0,3,0

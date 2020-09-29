@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UnternehmerDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">UnternehmerDAO.java</span></div><h1>UnternehmerDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Address;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L19">public class UnternehmerDAO extends UserDAO {</span>
+    private static UnternehmerDAO unternehmerDAO;
+<span class="fc" id="L21">    private String table = DBTables.TAB_UNTERNEHMER;</span>
+<span class="fc" id="L22">    private String view = DBViews.ALL_UNTERNEHMER;</span>
+
+    public static UnternehmerDAO getInstance() {
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (unternehmerDAO == null) unternehmerDAO = new UnternehmerDAO();</span>
+
+<span class="fc" id="L28">        return unternehmerDAO;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;Unternehmer&gt; fetchAllUsers() throws DatabaseException {
+<span class="nc" id="L34">        ResultSet unternehmerData = null;</span>
+<span class="nc" id="L35">        List&lt;Unternehmer&gt; unternehmerList = new ArrayList&lt;&gt;();</span>
+
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot;;&quot;;
+<span class="nc" id="L38">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot;;&quot;;</span>
+
+<span class="nc" id="L40">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+
+<span class="nc" id="L44">            unternehmerData = statement.executeQuery();</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            while (unternehmerData.next()) {</span>
+
+<span class="nc" id="L48">                Unternehmer unternehmer = new Unternehmer();</span>
+<span class="nc" id="L49">                unternehmer.setAnrede(unternehmerData.getString(&quot;anrede&quot;));</span>
+<span class="nc" id="L50">                unternehmer.setGeburtsdatum(unternehmerData.getDate(&quot;geburtsdatum&quot;).toLocalDate());</span>
+<span class="nc" id="L51">                unternehmer.setUsername(unternehmerData.getString(&quot;username&quot;));</span>
+<span class="nc" id="L52">                unternehmer.setNachname(unternehmerData.getString(&quot;nachname&quot;));</span>
+<span class="nc" id="L53">                unternehmer.setVorname(unternehmerData.getString(&quot;vorname&quot;));</span>
+<span class="nc" id="L54">                unternehmer.setEmail(unternehmerData.getString(&quot;email&quot;));</span>
+<span class="nc" id="L55">                unternehmer.setTelefon(unternehmerData.getString(&quot;telefon&quot;));</span>
+<span class="nc" id="L56">                unternehmer.setRegistrationDate(unternehmerData.getDate(&quot;regdate&quot;).toLocalDate());</span>
+<span class="nc" id="L57">                unternehmer.setAddress(AddressDAO.getInstance().fetchAddress(unternehmerData.getInt(&quot;adresse&quot;)));</span>
+<span class="nc" id="L58">                unternehmer.setKundennummer(unternehmerData.getInt(&quot;kunden_nr&quot;));</span>
+<span class="nc" id="L59">                unternehmer.setFirmenname(unternehmerData.getString(&quot;firmenname&quot;));</span>
+<span class="nc" id="L60">                unternehmer.setUstId(unternehmerData.getString(&quot;ustid&quot;));</span>
+<span class="nc" id="L61">                unternehmer.setIban(unternehmerData.getString(&quot;iban&quot;));</span>
+<span class="nc" id="L62">                unternehmer.setAvatar(unternehmerData.getString(&quot;avatar&quot;));</span>
+
+<span class="nc" id="L64">                unternehmerList.add(unternehmer);</span>
+<span class="nc" id="L65">            }</span>
+
+<span class="nc" id="L67">        } catch (SQLException e) {</span>
+<span class="nc" id="L68">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L70">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc bnc" id="L71" title="All 6 branches missed.">            try { if (unternehmerData != null) unternehmerData.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L72">        }</span>
+<span class="nc" id="L73">        return unternehmerList;</span>
+    }
+
+
+    public Unternehmer fetchUser(String email) throws DatabaseException {
+<span class="fc" id="L78">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L79">        ResultSet unternehmerdata = null;</span>
+<span class="fc" id="L80">        Unternehmer unternehmer = new Unternehmer();</span>
+
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE email = '&quot; + email + &quot;';&quot;;
+<span class="fc" id="L83">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE email = ?;&quot;;</span>
+<span class="fc" id="L84">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L87">            statement.setString(1,email);</span>
+
+<span class="fc" id="L89">            unternehmerdata = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            if(unternehmerdata.next()) {</span>
+<span class="fc" id="L92">                unternehmer.setAnrede(unternehmerdata.getString(&quot;anrede&quot;));</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                if(unternehmerdata.getDate(&quot;geburtsdatum&quot;) != null) unternehmer.setGeburtsdatum(unternehmerdata.getDate(&quot;geburtsdatum&quot;).toLocalDate());</span>
+<span class="fc" id="L94">                unternehmer.setUsername(unternehmerdata.getString(&quot;username&quot;));</span>
+<span class="fc" id="L95">                unternehmer.setNachname(unternehmerdata.getString(&quot;nachname&quot;));</span>
+<span class="fc" id="L96">                unternehmer.setVorname(unternehmerdata.getString(&quot;vorname&quot;));</span>
+<span class="fc" id="L97">                unternehmer.setEmail(unternehmerdata.getString(&quot;email&quot;));</span>
+<span class="fc" id="L98">                unternehmer.setTelefon(unternehmerdata.getString(&quot;telefon&quot;));</span>
+<span class="fc" id="L99">                unternehmer.setRegistrationDate(unternehmerdata.getDate(&quot;regdate&quot;).toLocalDate());</span>
+<span class="fc" id="L100">                unternehmer.setAddress(AddressDAO.getInstance().fetchAddress(unternehmerdata.getInt(&quot;adresse&quot;)));</span>
+<span class="fc" id="L101">                unternehmer.setKundennummer(unternehmerdata.getInt(&quot;kunden_nr&quot;));</span>
+<span class="fc" id="L102">                unternehmer.setFirmenname(unternehmerdata.getString(&quot;firmenname&quot;));</span>
+<span class="fc" id="L103">                unternehmer.setUstId(unternehmerdata.getString(&quot;ustid&quot;));</span>
+<span class="fc" id="L104">                unternehmer.setIban(unternehmerdata.getString(&quot;iban&quot;));</span>
+<span class="fc" id="L105">                unternehmer.setAvatar(unternehmerdata.getString(&quot;avatar&quot;));</span>
+            }
+
+<span class="nc" id="L108">        } catch (SQLException e) {</span>
+<span class="nc" id="L109">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L111">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L112" title="5 of 6 branches missed.">            try { if (unternehmerdata != null) unternehmerdata.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L113">        }</span>
+<span class="fc" id="L114">        return unternehmer;</span>
+    }
+
+
+
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN  -START -----------------------------------------------------------------------------
+
+
+    public void registerUnternehmer(Unternehmer unternehmer, String password) throws DatabaseException {
+
+<span class="fc" id="L126">        registerUser(unternehmer, password);</span>
+
+<span class="fc" id="L128">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(default,?,?,null,null)&quot;;</span>
+<span class="fc" id="L129">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L132">            statement.setString(1, unternehmer.getEmail());</span>
+<span class="fc" id="L133">            statement.setString(2, unternehmer.getFirmenname());</span>
+
+<span class="fc" id="L135">            statement.executeUpdate();</span>
+<span class="fc" id="L136">            unternehmer.setKundennummer(getKundenNummer(unternehmer.getEmail()));</span>
+<span class="fc" id="L137">            System.out.println(&quot;Unternehmer &quot; + unternehmer.getUsername() + &quot; erfolgreich registriert!&quot;);</span>
+<span class="nc" id="L138">        } catch (SQLException e) {</span>
+<span class="nc" id="L139">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L141">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L142">        }</span>
+<span class="fc" id="L143">    }</span>
+    public void persistUser(Unternehmer unternehmer, Address address, String password) throws DatabaseException {
+
+<span class="fc" id="L146">        UserDAO.getInstance().prepersistUser(unternehmer, address, password);</span>
+
+<span class="fc" id="L148">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(default,?,?,?,?)&quot;;</span>
+<span class="fc" id="L149">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L152">            statement.setString(1, unternehmer.getEmail());</span>
+<span class="fc" id="L153">            statement.setString(2, unternehmer.getFirmenname());</span>
+<span class="fc" id="L154">            statement.setString(3, unternehmer.getUstId());</span>
+<span class="fc" id="L155">            statement.setString(4, unternehmer.getIban());</span>
+
+<span class="fc" id="L157">            statement.executeUpdate();</span>
+<span class="fc" id="L158">            unternehmer.setKundennummer(getKundenNummer(unternehmer.getEmail()));</span>
+<span class="fc" id="L159">            System.out.println(&quot;Unternehmer &quot; + unternehmer.getUsername() + &quot; erfolgreich registriert!&quot;);</span>
+<span class="nc" id="L160">        } catch (SQLException e) {</span>
+<span class="nc" id="L161">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L163">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L164">        }</span>
+<span class="fc" id="L165">    }</span>
+
+    // PERSISTMETHODEN  -END
+
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    private int getKundenNummer(String email) {
+<span class="fc" id="L173">        int kundenNummer = 0;</span>
+<span class="fc" id="L174">        ResultSet resultSet = null;</span>
+
+        //String sqlBefehl = &quot;SELECT kunden_nr FROM &quot; + table + &quot; WHERE email = '&quot; + email + &quot;';&quot;;
+<span class="fc" id="L177">        String sqlBefehl = &quot;SELECT kunden_nr FROM &quot; + table + &quot; WHERE email = ?;&quot;;</span>
+<span class="fc" id="L178">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L181">            statement.setString(1,email);</span>
+<span class="fc" id="L182">            resultSet = statement.executeQuery();</span>
+
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">           if(resultSet.next()) kundenNummer = resultSet.getInt(&quot;kunden_nr&quot;);</span>
+
+<span class="nc" id="L186">        } catch (SQLException e) {</span>
+<span class="nc" id="L187">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L189" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L190">        }</span>
+<span class="fc" id="L191">        return kundenNummer;</span>
+    }
+
+
+    // HILFSMETHODEN -END
+
+    // PRÜFMETHODEN -START ---------------------------------------------------------------------------------------------
+    public boolean stIdAlreadyExists(String ustId) throws DatabaseException {
+<span class="nc" id="L199">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L200">        ResultSet resultSet = null;</span>
+<span class="nc" id="L201">        boolean exists = false;</span>
+        //String sqlBefehl = &quot;SELECT ustid  FROM &quot; + table + &quot; WHERE ustid = '&quot; + ustId + &quot;';&quot;;
+<span class="nc" id="L203">        String sqlBefehl = &quot;SELECT ustid  FROM &quot; + table + &quot; WHERE ustid = ?;&quot;;</span>
+<span class="nc" id="L204">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L207">            statement.setString(1,ustId);</span>
+<span class="nc" id="L208">            resultSet = statement.executeQuery();</span>
+<span class="nc" id="L209">            exists = resultSet.next();</span>
+<span class="nc" id="L210">        } catch (SQLException e) {</span>
+<span class="nc" id="L211">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L213">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc bnc" id="L214" title="All 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L215">        }</span>
+
+<span class="nc" id="L217">        return exists;</span>
+    }
+
+
+    // PRÜFMETHODEN -END
+
+
+
+    // SETTERMETHODEN -START -----------------------------------------------------------------------------------------------
+    // Setter Method's bitte für die ProfilPage verwenden
+    // Bitte auch immer checken ob die Bedingungen -&gt; TABLECONSTRAINTS, USE-CASE-ANFORDERUNGEN  &lt;- erfüllt sind
+
+    public void setFirmenname(Unternehmer unternehmer, String firmenname) throws DatabaseException {
+<span class="fc" id="L230">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L231">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET firmenname = '&quot; + firmenname +&quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L232">                + unternehmer.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L233">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L235">            statement.executeUpdate();</span>
+<span class="fc" id="L236">            System.out.println(&quot;Firmenname geändert.&quot;);</span>
+<span class="nc" id="L237">        } catch (SQLException e) {</span>
+<span class="nc" id="L238">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L240">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L241">        }</span>
+
+<span class="fc" id="L243">    }</span>
+
+
+    public void setUstid(Unternehmer unternehmer, String ustid) throws DatabaseException {
+<span class="fc" id="L247">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L248">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET ustid = '&quot; + ustid +&quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L249">                + unternehmer.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L250">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L252">            statement.executeUpdate();</span>
+<span class="fc" id="L253">            System.out.println(&quot;UmsatzSteuerID geändert.&quot;);</span>
+<span class="nc" id="L254">        } catch (SQLException e) {</span>
+<span class="nc" id="L255">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L257">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L258">        }</span>
+
+<span class="fc" id="L260">    }</span>
+
+
+    public void setIban(Unternehmer unternehmer, String iban) throws DatabaseException {
+<span class="fc" id="L264">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L265">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET iban = '&quot; + iban + &quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L266">                + unternehmer.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L267">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L269">            statement.executeUpdate();</span>
+<span class="fc" id="L270">            System.out.println(&quot;Iban geändert.&quot;);</span>
+<span class="nc" id="L271">        } catch (SQLException e) {</span>
+<span class="nc" id="L272">            Logger.getLogger(UnternehmerDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L274">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L275">        }</span>
+<span class="fc" id="L276">    }</span>
+
+    // SETTERMETHODEN -END
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

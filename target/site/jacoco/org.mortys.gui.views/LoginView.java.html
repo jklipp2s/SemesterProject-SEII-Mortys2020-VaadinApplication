@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.views</a> &gt; <span class="el_source">LoginView.java</span></div><h1>LoginView.java</h1><pre class="source lang-java linenums">package org.mortys.gui.views;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.*;
+import org.mortys.gui.components.Footer;
+import org.mortys.gui.components.Header;
+import org.mortys.gui.components.TextFieldWithIcon;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.LoginControl;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.exception.NoSuchUserOrPassword;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.Views;
+
+public class LoginView extends VerticalLayout implements View {
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+<span class="nc" id="L22">        User user = (User) UI.getCurrent().getSession().getAttribute(Roles.CURRENT_USER);</span>
+
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        if(user == null) {</span>
+<span class="nc" id="L25">            this.setUp();</span>
+        } else {
+<span class="nc" id="L27">            UI.getCurrent().getNavigator().navigateTo(Views.MAIN);</span>
+        };
+
+<span class="nc" id="L30">    }</span>
+
+<span class="nc" id="L32">    public LoginView(){};</span>
+
+    public void setUp() {
+<span class="nc" id="L35">        addComponent(new Header(false));</span>
+
+        // this is a unique build of the login view. It should not be excluded within its own file!
+<span class="nc" id="L38">        this.setStyleName(&quot;layout_loginRegister&quot;);</span>
+<span class="nc" id="L39">        HorizontalLayout body = new HorizontalLayout();</span>
+<span class="nc" id="L40">        body.addStyleName(&quot;login_container&quot;);</span>
+        // this is a unique build of the login view. It should not be excluded within its own file!
+
+<span class="nc" id="L43">        VerticalLayout leftPage = new VerticalLayout();</span>
+<span class="nc" id="L44">        leftPage.setStyleName(&quot;login_leftPane&quot;);</span>
+<span class="nc" id="L45">        Label pageLogo = new Label();</span>
+<span class="nc" id="L46">        pageLogo.setStyleName(&quot;login_pageLogo&quot;);</span>
+<span class="nc" id="L47">        leftPage.addComponent(pageLogo);</span>
+<span class="nc" id="L48">        Label title = new Label(&quot;Login&quot;);</span>
+<span class="nc" id="L49">        title.setStyleName(&quot;login_title&quot;);</span>
+<span class="nc" id="L50">        leftPage.addComponent(title);</span>
+        // this is a unique build of the login view. It should not be excluded within its own file!
+
+<span class="nc" id="L53">        Label icon = new Label(&quot;&quot;);</span>
+<span class="nc" id="L54">        icon.setIcon(VaadinIcons.SIGN_IN);</span>
+<span class="nc" id="L55">        icon.setStyleName(&quot;login_icon&quot;);</span>
+<span class="nc" id="L56">        leftPage.addComponent(icon);</span>
+
+
+<span class="nc" id="L59">        VerticalLayout rightPane = new VerticalLayout();</span>
+<span class="nc" id="L60">        rightPane.addStyleName(&quot;login_rightPane&quot;);</span>
+
+<span class="nc" id="L62">        TextField emailField = new TextField();</span>
+<span class="nc" id="L63">        emailField.setId(&quot;emailField&quot;);</span>
+<span class="nc" id="L64">        Label emailFieldLabel = new Label();</span>
+<span class="nc" id="L65">        emailFieldLabel.setIcon(VaadinIcons.USER);</span>
+<span class="nc" id="L66">        TextFieldWithIcon emailTextField = new TextFieldWithIcon(emailField, &quot;Email&quot;, emailFieldLabel);</span>
+
+<span class="nc" id="L68">        PasswordField passwortField = new PasswordField(&quot;&quot;);</span>
+<span class="nc" id="L69">        passwortField.setId(&quot;passwordField&quot;);</span>
+<span class="nc" id="L70">        Label passwortFieldLabel = new Label();</span>
+<span class="nc" id="L71">        passwortFieldLabel.setIcon(VaadinIcons.PASSWORD);</span>
+<span class="nc" id="L72">        TextFieldWithIcon passwortTextField = new TextFieldWithIcon(passwortField, &quot;Passwort&quot;, passwortFieldLabel);</span>
+
+<span class="nc" id="L74">        Button passwordVergessenLink = new Button(&quot;Passwort vergessen?&quot;);</span>
+<span class="nc" id="L75">        passwordVergessenLink.setStyleName(&quot;login_passwortVergessen&quot;);</span>
+
+<span class="nc" id="L77">        Button loginButton = new Button(&quot;Login&quot;);</span>
+<span class="nc" id="L78">        loginButton.setStyleName(&quot;login_button&quot;);</span>
+<span class="nc" id="L79">        loginButton.setId(&quot;loginButton&quot;);</span>
+<span class="nc" id="L80">        rightPane.addComponent(emailTextField);</span>
+<span class="nc" id="L81">        rightPane.addComponent(passwortTextField);</span>
+<span class="nc" id="L82">        rightPane.addComponent(passwordVergessenLink);</span>
+<span class="nc" id="L83">        rightPane.addComponent(loginButton);</span>
+
+<span class="nc" id="L85">        Button sendCodeButton = new Button(&quot;Send Code&quot;);</span>
+<span class="nc" id="L86">        sendCodeButton.setStyleName(&quot;login_sendCode&quot;);</span>
+
+<span class="nc" id="L88">        Button checkCodeButton = new Button(&quot;Check code&quot;);</span>
+<span class="nc" id="L89">        checkCodeButton.setStyleName(&quot;login_checkCode&quot;);</span>
+
+
+
+
+<span class="nc" id="L94">        body.addComponent(leftPage);</span>
+<span class="nc" id="L95">        body.addComponent(rightPane);</span>
+
+<span class="nc" id="L97">        this.addComponent(body);</span>
+<span class="nc" id="L98">        this.addComponent(new Footer());</span>
+
+        //Component Logic
+
+<span class="nc" id="L102">        loginButton.addClickListener(e -&gt;{</span>
+<span class="nc" id="L103">            String email = emailField.getValue();</span>
+<span class="nc" id="L104">            String password = passwortField.getValue();</span>
+
+            try{
+<span class="nc" id="L107">                LoginControl.checkAuthentication(email,password);</span>
+<span class="nc" id="L108">            }catch(NoSuchUserOrPassword ex1){</span>
+<span class="nc" id="L109">                Notification.show(&quot;Error&quot;, &quot;Wrong Email or Password. Please try again.&quot;, Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L110">                emailField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L111">                passwortField.setValue(&quot;&quot;);            }</span>
+<span class="nc" id="L112">            catch (DatabaseException ex2) {</span>
+<span class="nc" id="L113">                Notification.show(&quot;DB-Fehler&quot;, ex2.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L114">                emailField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L115">                passwortField.setValue(&quot;&quot;);        }</span>
+<span class="nc" id="L116">        });</span>
+
+<span class="nc" id="L118">        passwordVergessenLink.addClickListener(e-&gt;{</span>
+           //this.removeComponent(body);
+          // body.removeComponent(rightPane);
+<span class="nc" id="L121">           rightPane.removeComponent(passwortTextField);</span>
+<span class="nc" id="L122">           rightPane.removeComponent(loginButton);</span>
+<span class="nc" id="L123">           rightPane.removeComponent(passwordVergessenLink);</span>
+<span class="nc" id="L124">           rightPane.addComponent(sendCodeButton);</span>
+          // body.addComponent(rightPane);
+          // this.addComponent(body);
+<span class="nc" id="L127">        });</span>
+
+<span class="nc" id="L129">        sendCodeButton.addClickListener(e-&gt;{</span>
+<span class="nc" id="L130">           rightPane.removeComponent(sendCodeButton);</span>
+<span class="nc" id="L131">        });</span>
+
+<span class="nc" id="L133">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

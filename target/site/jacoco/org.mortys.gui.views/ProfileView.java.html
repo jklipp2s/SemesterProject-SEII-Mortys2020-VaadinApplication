@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.views</a> &gt; <span class="el_source">ProfileView.java</span></div><h1>ProfileView.java</h1><pre class="source lang-java linenums">package org.mortys.gui.views;
+
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import org.mortys.gui.components.Footer;
+import org.mortys.gui.components.Header;
+import org.mortys.gui.components.ProfileFields;
+import org.mortys.gui.components.ProfileLabel;
+import org.mortys.gui.windows.DeleteUserConfirmationWindow;
+import org.mortys.model.dao.StudentDAO;
+import org.mortys.model.dao.UnternehmerDAO;
+import org.mortys.model.dao.UserDAO;
+import org.mortys.model.objects.dto.Address;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.ToggleControl;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.UserFetcher;
+import org.mortys.services.util.Views;
+
+import java.time.LocalDate;
+
+import static org.mortys.process.control.UserControl.loadUserToSession;
+
+public class ProfileView extends VerticalLayout implements View {
+<span class="nc" id="L32">    Student student = null;</span>
+<span class="nc" id="L33">    Unternehmer unternehmer = null;</span>
+<span class="nc" id="L34">    User user = null;</span>
+<span class="nc" id="L35">    boolean mode = false;</span>
+<span class="nc" id="L36">    String persistFirma = &quot;&quot;;</span>
+<span class="nc" id="L37">    String persistUst =&quot;&quot;;</span>
+<span class="nc" id="L38">    String persistIban = &quot;&quot;;</span>
+<span class="nc" id="L39">    String persistMatrikelnummer=&quot;&quot;;</span>
+    ProfileLabel labels;
+    ProfileFields fields;
+<span class="nc" id="L42">    Header header = new Header(true);</span>
+<span class="nc" id="L43">    Footer footer = new Footer();</span>
+
+<span class="nc" id="L45">    public ProfileView(){</span>
+<span class="nc" id="L46">        this.user = UserFetcher.getUser();</span>
+<span class="nc" id="L47">    }</span>
+
+    /*
+    public void fetchUser(){
+        if ( UI.getCurrent().getSession().getAttribute(Roles.STUDENT) instanceof Student ) {
+            student = (Student) UI.getCurrent().getSession().getAttribute(Roles.STUDENT);
+            user = student;
+        } else {
+            unternehmer = (Unternehmer) UI.getCurrent().getSession().getAttribute(Roles.UNTERNEHMER);
+            user = unternehmer;
+        }
+    }
+    */
+
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+<span class="nc" id="L64">        this.user = UserFetcher.getUser();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L66">            UI.getCurrent().getNavigator().navigateTo(Views.MAIN);</span>
+        } else {
+<span class="nc" id="L68">            this.setUp();</span>
+        }
+
+<span class="nc" id="L71">    }</span>
+
+    private void buttonChange(HorizontalLayout buttonBar, Button editProfileButton, Button saveProfileButton, Button cancelProfileButton){
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if(mode){</span>
+<span class="nc" id="L75">            this.removeComponent(labels);</span>
+<span class="nc" id="L76">            this.removeComponent(buttonBar);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if(user instanceof Student){</span>
+<span class="nc" id="L78">                fields = new ProfileFields((Student)user);</span>
+            } else {
+<span class="nc" id="L80">                fields = new ProfileFields((Unternehmer)user);</span>
+            }
+<span class="nc" id="L82">            this.removeComponent(footer);</span>
+<span class="nc" id="L83">            this.addComponent(fields);</span>
+<span class="nc" id="L84">            buttonBar.removeComponent(editProfileButton);</span>
+<span class="nc" id="L85">            buttonBar.addComponent(saveProfileButton);</span>
+<span class="nc" id="L86">            buttonBar.addComponent(cancelProfileButton);</span>
+<span class="nc" id="L87">            this.addComponent(buttonBar);</span>
+<span class="nc" id="L88">            this.addComponent(footer);</span>
+        } else {
+<span class="nc" id="L90">            this.removeComponent(footer);</span>
+<span class="nc" id="L91">            this.removeComponent(fields);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if(user instanceof Student){</span>
+<span class="nc" id="L93">                labels = new ProfileLabel((Student)user);</span>
+            } else {
+<span class="nc" id="L95">                labels = new ProfileLabel((Unternehmer)user);</span>
+            }
+<span class="nc" id="L97">            this.addComponent(labels);</span>
+<span class="nc" id="L98">            this.addComponent(buttonBar);</span>
+<span class="nc" id="L99">            this.addComponent(footer);</span>
+<span class="nc" id="L100">            buttonBar.addComponent(editProfileButton);</span>
+<span class="nc" id="L101">            buttonBar.removeComponent(saveProfileButton);</span>
+<span class="nc" id="L102">            buttonBar.removeComponent(cancelProfileButton);</span>
+        }
+<span class="nc" id="L104">    }</span>
+
+    public void setUp() {
+
+        //Layout setup - START
+<span class="nc" id="L109">        addComponent(header);</span>
+<span class="nc" id="L110">        this.setStyleName(&quot;layout_profile&quot;);</span>
+
+<span class="nc" id="L112">        HorizontalLayout buttonBar = new HorizontalLayout();</span>
+<span class="nc" id="L113">        buttonBar.setStyleName(&quot;profile_buttonBar&quot;);</span>
+
+        //Layout setup - END
+
+        // LABELS - START
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if(user instanceof Student){</span>
+<span class="nc" id="L119">            labels = new ProfileLabel((Student)user);</span>
+        } else {
+<span class="nc" id="L121">            labels = new ProfileLabel((Unternehmer)user);</span>
+        }
+        //LABELS - END
+
+        // Button Group - START
+<span class="nc" id="L126">        Button editProfileButton = new Button(&quot;Edit&quot;);</span>
+<span class="nc" id="L127">        editProfileButton.setStyleName(&quot;profile_editButton&quot;);</span>
+<span class="nc" id="L128">        editProfileButton.setId(&quot;editButton&quot;);</span>
+
+<span class="nc" id="L130">        Button deleteProfileButton = new Button(&quot;Delete Profile&quot;);</span>
+<span class="nc" id="L131">        deleteProfileButton.setStyleName(&quot;profile_deleteButton&quot;);</span>
+<span class="nc" id="L132">        deleteProfileButton.setId(&quot;deleteButton&quot;);</span>
+
+<span class="nc" id="L134">        Button saveProfileButton = new Button(&quot;Save&quot;);</span>
+<span class="nc" id="L135">        saveProfileButton.setStyleName(&quot;profile_saveButton&quot;);</span>
+<span class="nc" id="L136">        saveProfileButton.setId(&quot;saveButton&quot;);</span>
+
+<span class="nc" id="L138">        Button cancelProfileButton = new Button(&quot;Cancel&quot;);</span>
+<span class="nc" id="L139">        cancelProfileButton.setStyleName(&quot;profile_cancelButton&quot;);</span>
+<span class="nc" id="L140">        cancelProfileButton.setId(&quot;cancelButton&quot;);</span>
+
+<span class="nc" id="L142">        Button submitJobOfferButton = new Button(&quot;Submit Job Offer&quot;);</span>
+<span class="nc" id="L143">        submitJobOfferButton.setStyleName(&quot;profile_saveButton&quot;);</span>
+<span class="nc" id="L144">        submitJobOfferButton.setId(&quot;jobOfferButton&quot;);</span>
+<span class="nc" id="L145">        buttonBar.addComponent(deleteProfileButton);</span>
+<span class="nc" id="L146">        buttonBar.addComponent(editProfileButton);</span>
+<span class="nc bnc" id="L147" title="All 4 branches missed.">        if( UI.getCurrent().getSession().getAttribute(Roles.CURRENT_USER) instanceof Unternehmer  &amp;&amp; !ToggleControl.featureIsEnabled(&quot;func-set-bewerbungen&quot;)){</span>
+<span class="nc" id="L148">            buttonBar.addComponent(submitJobOfferButton);</span>
+        }
+        // Button Group - END
+<span class="nc" id="L151">        this.addComponent(labels);</span>
+<span class="nc" id="L152">        this.addComponent(buttonBar);</span>
+<span class="nc" id="L153">        this.addComponent(footer);</span>
+
+        //Button Logic
+
+<span class="nc" id="L157">        editProfileButton.addClickListener(e -&gt; {</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            mode = !mode;</span>
+
+<span class="nc" id="L160">            this.user = UserFetcher.getUser();</span>
+
+<span class="nc" id="L162">            this.buttonChange(buttonBar, editProfileButton, saveProfileButton,cancelProfileButton);</span>
+<span class="nc" id="L163">        });</span>
+
+
+
+
+<span class="nc" id="L168">        saveProfileButton.addClickListener(e-&gt;{</span>
+            User persistUser;
+<span class="nc" id="L170">            boolean studentUsr = false;</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if(user instanceof Student) {</span>
+<span class="nc" id="L172">                persistUser = new Student();</span>
+<span class="nc" id="L173">                studentUsr = true;</span>
+            } else {
+<span class="nc" id="L175">                persistUser = new Unternehmer();</span>
+            }
+
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            String persistAnrede = fields.getAnredeSelect().getValue() == null ? &quot;&quot; : fields.getAnredeSelect().getValue();</span>
+<span class="nc bnc" id="L179" title="All 4 branches missed.">            String persistNachname =  fields.getNachnameFieldbasic().getValue().equals(&quot;&quot;) ? user.getNachname() == null ? &quot;&quot; : user.getNachname() : fields.getNachnameFieldbasic().getValue();</span>
+<span class="nc bnc" id="L180" title="All 4 branches missed.">            String persistVorname = fields.getVornameFieldbasic().getValue().equals(&quot;&quot;) ? user.getVorname() == null ? &quot;&quot; : user.getVorname() : fields.getVornameFieldbasic().getValue();</span>
+<span class="nc" id="L181">            LocalDate persisteGebDatum = fields.getDateField().getValue();</span>
+<span class="nc bnc" id="L182" title="All 6 branches missed.">            if(studentUsr) {persistMatrikelnummer = fields.getVornameFieldbasic().getValue().equals(&quot;&quot;) ? ((Student) user).getMatrikelnr() == null ? &quot;&quot; : ((Student)user).getMatrikelnr() : fields.getMatrikelnummerFieldBasic().getValue();}</span>
+<span class="nc bnc" id="L183" title="All 6 branches missed.">            if(!studentUsr) { persistFirma = fields.getFirmaFieldBasic().getValue().equals(&quot;&quot;) ? ((Unternehmer)user).getFirmenname() == null ? &quot;&quot; : ((Unternehmer)user).getFirmenname() : fields.getFirmaFieldBasic().getValue();}</span>
+
+<span class="nc bnc" id="L185" title="All 4 branches missed.">            String persistStrasse = fields.getStrasseFieldBasic().getValue().equals(&quot;&quot;) ? user.getAddress() == null ? &quot;&quot; : user.getAddress().getStreet() : fields.getStrasseFieldBasic().getValue();</span>
+<span class="nc bnc" id="L186" title="All 6 branches missed.">            String persistHausnummer =  fields.getHausnummerFieldBasic().getValue().equals(&quot;&quot;) ? &quot;&quot; + user.getAddress().getHausnummer() : fields.getHausnummerFieldBasic().getValue();            String persistPlz = fields.getPlzFieldBasic().getValue().equals(&quot;&quot;) ? user.getAddress() == null ? &quot;&quot; : user.getAddress().getPlz() : fields.getPlzFieldBasic().getValue();</span>
+<span class="nc bnc" id="L187" title="All 4 branches missed.">            String persistOrt = fields.getOrtFieldBasic().getValue().equals(&quot;&quot;) ? user.getAddress() == null ? &quot;&quot; : user.getAddress().getOrt() : fields.getOrtFieldBasic().getValue();</span>
+
+<span class="nc" id="L189">            Address persistAddress = new Address();</span>
+<span class="nc" id="L190">            persistAddress.setStreet(persistStrasse);</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">           if(!persistHausnummer.equals(&quot;&quot;)) { persistAddress.setHausnummer(Integer.parseInt(persistHausnummer));}</span>
+<span class="nc" id="L192">            persistAddress.setPlz(persistPlz);</span>
+<span class="nc" id="L193">            persistAddress.setOrt(persistOrt);</span>
+
+<span class="nc bnc" id="L195" title="All 6 branches missed.">            if(!studentUsr) { persistUst = fields.getUstIdFieldBasic().getValue().equals(&quot;&quot;) ? ((Unternehmer)user).getUstId() == null ? &quot;&quot;: ((Unternehmer)user).getUstId() : fields.getUstIdFieldBasic().getValue();}</span>
+<span class="nc bnc" id="L196" title="All 6 branches missed.">            if(!studentUsr) { persistIban =  fields.getIbanFieldBasic().getValue().equals(&quot;&quot;) ? ((Unternehmer)user).getIban() == null ? &quot;&quot; : ((Unternehmer)user).getIban() : fields.getIbanFieldBasic().getValue();}</span>
+
+<span class="nc bnc" id="L198" title="All 4 branches missed.">            String persistTelefon = fields.getTelefonnummerFieldBasic().getValue().equals(&quot;&quot;) ? user.getTelefon() == null ? &quot;&quot; : user.getTelefon() : fields.getTelefonnummerFieldBasic().getValue();</span>
+
+            try {
+<span class="nc" id="L201">                UserDAO.getInstance().setAdresse(user, persistAddress);</span>
+<span class="nc" id="L202">                UserDAO.getInstance().setAnrede(user, persistAnrede);</span>
+<span class="nc" id="L203">                UserDAO.getInstance().setNachname(user, persistNachname);</span>
+<span class="nc" id="L204">                UserDAO.getInstance().setVorname(user, persistVorname);</span>
+<span class="nc" id="L205">                UserDAO.getInstance().setGeburtsDatum(user, persisteGebDatum);</span>
+<span class="nc" id="L206">                UserDAO.getInstance().setTelefon(user, persistTelefon);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">               if(!studentUsr) UnternehmerDAO.getInstance().setFirmenname((Unternehmer)user, persistFirma);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">               if(!studentUsr) UnternehmerDAO.getInstance().setUstid((Unternehmer)user, persistUst);</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">               if(!studentUsr) UnternehmerDAO.getInstance().setIban((Unternehmer)user, persistIban);</span>
+
+<span class="nc" id="L211">            } catch (DatabaseException databaseException) {</span>
+<span class="nc" id="L212">                databaseException.printStackTrace();</span>
+<span class="nc" id="L213">            }</span>
+
+<span class="nc" id="L215">            loadUserToSession(user.getEmail());</span>
+
+<span class="nc" id="L217">            this.user = UserFetcher.getUser();</span>
+
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            mode = !mode;</span>
+<span class="nc" id="L220">            this.buttonChange(buttonBar, editProfileButton, saveProfileButton,cancelProfileButton);</span>
+<span class="nc" id="L221">        });</span>
+
+
+
+<span class="nc" id="L225">        deleteProfileButton.addClickListener(e-&gt;{</span>
+<span class="nc" id="L226">           UI.getCurrent().addWindow(new DeleteUserConfirmationWindow(&quot;Sind Sie sicher!?&quot;));</span>
+<span class="nc" id="L227">        });</span>
+
+<span class="nc" id="L229">        cancelProfileButton.addClickListener(e-&gt;{</span>
+
+<span class="nc" id="L231">            this.user = UserFetcher.getUser();</span>
+
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            mode = !mode;</span>
+<span class="nc" id="L234">            this.buttonChange(buttonBar, editProfileButton, saveProfileButton,cancelProfileButton);</span>
+<span class="nc" id="L235">        });</span>
+
+<span class="nc" id="L237">        submitJobOfferButton.addClickListener(e -&gt; {</span>
+<span class="nc" id="L238">           UI.getCurrent().getNavigator().navigateTo(Views.APPLICATION);</span>
+<span class="nc" id="L239">        });</span>
+
+
+<span class="nc" id="L242">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

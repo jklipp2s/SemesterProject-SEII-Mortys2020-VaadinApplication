@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Header.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.components</a> &gt; <span class="el_source">Header.java</span></div><h1>Header.java</h1><pre class="source lang-java linenums">package org.mortys.gui.components;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.*;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.LoginControl;
+import org.mortys.process.control.ToggleControl;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.Views;
+
+public class Header extends HorizontalLayout {
+
+    //Style
+
+<span class="nc" id="L18">    User user = null;</span>
+<span class="nc" id="L19">    public Header(boolean logo){</span>
+<span class="nc" id="L20">        this.setStyleName(&quot;header_main&quot;);</span>
+<span class="nc" id="L21">     Image headLogo = new Image(null, new ThemeResource(&quot;img/logo_Mortys.png&quot;));</span>
+<span class="nc" id="L22">     headLogo.setWidth(150, Unit.PIXELS);</span>
+<span class="nc" id="L23">     headLogo.setStyleName(&quot;header_main_logo&quot;);</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">     if(logo) {</span>
+<span class="nc" id="L25">         this.addComponent(headLogo);</span>
+     }
+<span class="nc" id="L27">    HorizontalLayout header_menuBox = new HorizontalLayout();</span>
+<span class="nc" id="L28">    header_menuBox.setStyleName(&quot;header_main_menuBox&quot;);</span>
+
+        // USER FETCHING
+<span class="nc" id="L31">        User user = (User) UI.getCurrent().getSession().getAttribute(Roles.CURRENT_USER);</span>
+
+<span class="nc bnc" id="L33" title="All 4 branches missed.">            Label headLabel = new Label(&quot;Logged in as: &quot; + (user instanceof Student ? &quot;Student: &quot; + ((Student) user).getMatrikelnr() + &quot; &quot; + user.getVorname() + &quot;, &quot;+ user.getNachname() : user instanceof Unternehmer ? &quot;Unternehmer: &quot; + ((Unternehmer) user).getFirmenname() + &quot; &quot; + user.getVorname() + &quot;, &quot; + user.getNachname() : &quot;Admin&quot;));</span>
+<span class="nc" id="L34">            headLabel.addStyleName(&quot;header_main_menuBox_headLabel&quot;);</span>
+<span class="nc" id="L35">            CheckBoxFeature c = new CheckBoxFeature();</span>
+
+<span class="nc" id="L37">            c.setFeature(&quot;func-set-bewerbungen&quot;);</span>
+<span class="nc" id="L38">            c.setCaption(&quot;Bewerbungen deaktivieren&quot;);</span>
+<span class="nc" id="L39">            ToggleControl.addToggle(c);</span>
+<span class="nc" id="L40">            ToggleControl.setValue(c);</span>
+
+<span class="nc" id="L42">        headLogo.addClickListener(e -&gt;{</span>
+<span class="nc" id="L43">           UI.getCurrent().getNavigator().navigateTo(Views.MAIN);</span>
+<span class="nc" id="L44">        });</span>
+
+
+
+<span class="nc" id="L48">    MenuBar bar = new MenuBar();</span>
+<span class="nc" id="L49">    MenuBar.MenuItem item1 = bar.addItem(&quot;&quot;, null);</span>
+
+    //Loggout
+<span class="nc" id="L52">        item1.addItem(&quot;Logout&quot;, VaadinIcons.SIGN_OUT, new MenuBar.Command() {</span>
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+<span class="nc" id="L55">                LoginControl.logoutUser();</span>
+<span class="nc" id="L56">            }</span>
+        });
+
+
+<span class="nc" id="L60">        item1.addItem(&quot;Profil&quot;, VaadinIcons.USER, new MenuBar.Command() {</span>
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+<span class="nc" id="L63">                UI.getCurrent().getNavigator().navigateTo(Views.PROFILE);</span>
+<span class="nc" id="L64">            }</span>
+        });
+
+
+<span class="nc" id="L68">        item1.addItem(&quot;Suche&quot;, VaadinIcons.SEARCH, new MenuBar.Command() {</span>
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+<span class="nc" id="L71">                UI.getCurrent().getNavigator().navigateTo(Views.SEARCH);</span>
+<span class="nc" id="L72">            }</span>
+        });
+
+
+
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            if(user != null){</span>
+<span class="nc" id="L79">                header_menuBox.addComponent(headLabel);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                if (user.getEmail().equals(&quot;admin@admin.de&quot;)) {</span>
+<span class="nc" id="L81">                    header_menuBox.addComponent(c);</span>
+                }
+<span class="nc" id="L83">                header_menuBox.addComponent(bar);</span>
+            }
+<span class="nc" id="L85">        this.addComponent(header_menuBox);</span>
+
+<span class="nc" id="L87">    }</span>
+
+    }
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

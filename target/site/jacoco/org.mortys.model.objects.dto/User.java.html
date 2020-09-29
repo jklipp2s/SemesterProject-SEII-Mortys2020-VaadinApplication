@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.objects.dto</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package org.mortys.model.objects.dto;
+
+import java.time.LocalDate;
+
+<span class="fc" id="L5">public abstract class User {</span>
+    private String anrede;
+    private LocalDate geburtsdatum;
+    private String username;
+    private String vorname;
+    private String nachname;
+    private Address address;
+    private String email;
+    private String telefon;
+    private LocalDate registrationDate;
+    private String status;
+    private String avatar;
+    private String password;
+
+
+    public String getAvatar() {
+<span class="fc" id="L21">        return avatar;</span>
+    }
+
+    public void setAvatar(String avatar) {
+<span class="fc" id="L25">        this.avatar = avatar;</span>
+<span class="fc" id="L26">    }</span>
+<span class="fc" id="L27">    public String getAnrede() { return anrede; }</span>
+
+<span class="fc" id="L29">    public void setAnrede(String anrede) { this.anrede = anrede; }</span>
+
+<span class="fc" id="L31">    public LocalDate getGeburtsdatum() { return geburtsdatum; }</span>
+
+<span class="fc" id="L33">    public void setGeburtsdatum(LocalDate geburtsdatum) { this.geburtsdatum = geburtsdatum; }</span>
+
+<span class="fc" id="L35">    public String getUsername() { return username; }</span>
+
+<span class="fc" id="L37">    public void setUsername(String username) { this.username = username; }</span>
+
+<span class="fc" id="L39">    public String getVorname() { return vorname; }</span>
+
+<span class="fc" id="L41">    public void setVorname(String vorname) { this.vorname = vorname; }</span>
+
+<span class="fc" id="L43">    public String getNachname() { return nachname; }</span>
+
+<span class="fc" id="L45">    public void setNachname(String nachname) { this.nachname = nachname; }</span>
+
+<span class="fc" id="L47">    public Address getAddress() { return address; }</span>
+
+<span class="fc" id="L49">    public void setAddress(Address address) { this.address = address; }</span>
+
+<span class="fc" id="L51">    public String getEmail() { return email; }</span>
+
+<span class="fc" id="L53">    public void setEmail(String email) { this.email = email; }</span>
+
+<span class="fc" id="L55">    public String getTelefon() { return telefon; }</span>
+
+<span class="fc" id="L57">    public void setTelefon(String telefon) { this.telefon = telefon; }</span>
+
+<span class="nc" id="L59">    public LocalDate getRegistrationDate() { return registrationDate; }</span>
+
+<span class="fc" id="L61">    public void setRegistrationDate(LocalDate registrationDate) { this.registrationDate = registrationDate; }</span>
+
+<span class="fc" id="L63">    public String getStatus() { return status; }</span>
+
+<span class="fc" id="L65">    public void setStatus(String status) { this.status = status; }</span>
+
+    public String getOrt() {
+<span class="nc" id="L68">        return getAddress().getPlz() + &quot; &quot; + getAddress().getOrt();</span>
+    }
+
+
+    public String getPassword() {
+<span class="fc" id="L73">        return password;</span>
+    }
+
+    public void setPassword(String password) {
+<span class="fc" id="L77">        this.password = password;</span>
+<span class="fc" id="L78">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

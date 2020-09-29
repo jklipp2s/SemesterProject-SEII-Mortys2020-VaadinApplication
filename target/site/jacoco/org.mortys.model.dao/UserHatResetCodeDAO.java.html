@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserHatResetCodeDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">UserHatResetCodeDAO.java</span></div><h1>UserHatResetCodeDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.process.control.LoginControl;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.exception.UserNotFoundException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.PasswordResetData;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class UserHatResetCodeDAO extends AbstractDAO {
+
+<span class="nc" id="L17">    private static UserHatResetCodeDAO userHatResetCodeDAO = null;</span>
+<span class="nc" id="L18">    private String table = DBTables.TAB_USER_HAT_RESETCODE;</span>
+
+<span class="nc" id="L20">    private UserHatResetCodeDAO() {</span>
+
+<span class="nc" id="L22">    }</span>
+
+    public static synchronized UserHatResetCodeDAO getInstance() {
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (userHatResetCodeDAO == null)</span>
+<span class="nc" id="L26">            userHatResetCodeDAO = new UserHatResetCodeDAO();</span>
+<span class="nc" id="L27">        return userHatResetCodeDAO;</span>
+    }
+
+
+    /**
+     * loescht alle Resetcodes, die aelter als das Limit seit dessen Erstellung sind
+     * @return
+     * @throws DatabaseException
+     */
+    public void deleteTooOldResetCodes() throws DatabaseException {
+        // loescht alle codes, die qelter als 10min sind
+        // Verbindung wird beim Aufrufer geöffnet
+<span class="nc" id="L39">        String sqlBefehl = &quot;DELETE FROM dbs_tab_user_hat_resetcode WHERE erstellt &lt; now()-'&quot;</span>
+                + PasswordResetData.LIMIT_VALID_VALUE + &quot; &quot;
+                + PasswordResetData.LIMIT_VALID_UNIT + &quot;'::interval&quot;;
+        try {
+<span class="nc" id="L43">            getStatement().executeUpdate(sqlBefehl);</span>
+<span class="nc" id="L44">        } catch (SQLException e) {</span>
+<span class="nc" id="L45">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L46">        }</span>
+        // kein close(), da nach der Methode eine weitere mit DB-Zugriff folgt
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * Erzeugt ein zufällig generiertes 6-stelligen Code zum reseten des Passwortes.
+     * @param email
+     * @return
+     * @throws DatabaseException
+     */
+    public String insertResetCodeByUser(String email, String resetcode) throws DatabaseException, UserNotFoundException {
+<span class="nc" id="L57">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="nc" id="L59">        String randomCode = LoginControl.generateResetCode();</span>
+
+<span class="nc" id="L61">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES (\'&quot;</span>
+                + email + &quot;\',\'&quot;
+                + randomCode
+                + &quot;\',default)&quot;;
+        try {
+<span class="nc" id="L66">            getStatement().executeUpdate(sqlBefehl);</span>
+<span class="nc" id="L67">        } catch (SQLException e) {</span>
+<span class="nc" id="L68">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L69">            throw new DatabaseException(&quot;ResetCode konnte nicht gespeichert werden&quot;);</span>
+        } finally {
+<span class="nc" id="L71">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L72">        }</span>
+<span class="nc" id="L73">        return randomCode;</span>
+    }
+
+    /**
+     * prüft, ob User bereits ein Code angefordert hat, welches noch gültig ist
+     * @param email
+     * @return
+     */
+    public boolean resetCodeIsAlreadyExistsByUser(String email) {
+<span class="nc" id="L82">        String sqlBefehl = &quot;SELECT email FROM &quot; + table + &quot; WHERE email = \'&quot; + email + &quot;\'&quot;;</span>
+        ResultSet resultSet;
+<span class="nc" id="L84">        boolean exists = false;</span>
+        try {
+<span class="nc" id="L86">            resultSet = getStatement().executeQuery(sqlBefehl);</span>
+<span class="nc" id="L87">            exists = resultSet.next();</span>
+<span class="nc" id="L88">        } catch (SQLException e) {</span>
+<span class="nc" id="L89">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L90">        }</span>
+<span class="nc" id="L91">        return exists;</span>
+
+    }
+
+    /**
+     * löscht von dem User gültigenn Code
+     * @param email
+     */
+    public void deleteExistendResetCodeByUser(String email) {
+<span class="nc" id="L100">        String sqlBefehl = &quot;DELETE FROM &quot; + table + &quot; WHERE email = \'&quot; + email + &quot;\'&quot;;</span>
+        try {
+<span class="nc" id="L102">            getStatement().executeUpdate(sqlBefehl);</span>
+<span class="nc" id="L103">        } catch (SQLException e) {</span>
+<span class="nc" id="L104">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L105">        }</span>
+<span class="nc" id="L106">    }</span>
+
+    public String getResetCodeByUser(String email) throws DatabaseException {
+<span class="nc" id="L109">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L110">        deleteTooOldResetCodes();</span>
+<span class="nc" id="L111">        String sqlBefehl = &quot;SELECT code FROM &quot; + table + &quot; WHERE email = '&quot; + email + &quot;'&quot;;</span>
+<span class="nc" id="L112">        ResultSet resultSet = null;</span>
+<span class="nc" id="L113">        String resetcode = null;</span>
+
+        try {
+<span class="nc" id="L116">            resultSet = getStatement().executeQuery(sqlBefehl);</span>
+<span class="nc" id="L117">            resultSet.next();</span>
+<span class="nc" id="L118">            resetcode = resultSet.getString(1);</span>
+<span class="nc" id="L119">        } catch (SQLException e) {</span>
+<span class="nc" id="L120">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L122">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L123">        }</span>
+<span class="nc" id="L124">        return resetcode;</span>
+    }
+
+    public void resetPasswort(String email, String password) throws DatabaseException {
+<span class="nc" id="L128">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L129">        String sqlBefehl = &quot;UPDATE dbs_tab_user SET password = '&quot; + password + &quot;' WHERE email = '&quot; + email + &quot;'&quot;;</span>
+        try {
+<span class="nc" id="L131">            getStatement().executeUpdate(sqlBefehl);</span>
+<span class="nc" id="L132">        } catch (SQLException e) {</span>
+<span class="nc" id="L133">            Logger.getLogger(UserHatResetCodeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L135">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

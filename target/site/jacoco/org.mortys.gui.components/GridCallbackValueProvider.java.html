@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridCallbackValueProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.components</a> &gt; <span class="el_source">GridCallbackValueProvider.java</span></div><h1>GridCallbackValueProvider.java</h1><pre class="source lang-java linenums">package org.mortys.gui.components;
+
+
+import com.vaadin.data.ValueProvider;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.*;
+import org.mortys.gui.windows.StellenAnzeigeSelectWindow;
+import org.mortys.gui.windows.StudentSelectWindow;
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Student;
+
+public  class GridCallbackValueProvider&lt;T&gt;
+        implements ValueProvider&lt;T, Layout&gt; {
+
+
+    private final Grid&lt;T&gt; grid;
+
+
+<span class="nc" id="L19">    public GridCallbackValueProvider(Grid&lt;T&gt; grid) {</span>
+<span class="nc" id="L20">        this.grid = grid;</span>
+<span class="nc" id="L21">    }</span>
+
+    @Override
+    public Layout apply(T obj) {
+<span class="nc" id="L25">        HorizontalLayout al = new HorizontalLayout();</span>
+<span class="nc" id="L26">        Button button = new Button();</span>
+
+<span class="nc" id="L28">        al.addComponent(button);</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        button.setIcon(obj instanceof Student ? VaadinIcons.CLIPBOARD_USER : VaadinIcons.USER_CARD);</span>
+<span class="nc" id="L30">        button.setStyleName(&quot;selectButton&quot;);</span>
+<span class="nc" id="L31">        button.addClickListener( clickEvent -&gt; {</span>
+
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">         if(obj instanceof Student) {</span>
+<span class="nc" id="L35">             StudentSelectWindow window = new StudentSelectWindow((Student) obj);</span>
+<span class="nc" id="L36">             UI.getCurrent().addWindow(window);</span>
+         }
+
+
+<span class="nc bnc" id="L40" title="All 2 branches missed.">            if(obj instanceof StellenAnzeige) {</span>
+<span class="nc" id="L41">                StellenAnzeigeSelectWindow window = new StellenAnzeigeSelectWindow((StellenAnzeige) obj);</span>
+<span class="nc" id="L42">                UI.getCurrent().addWindow(window);</span>
+            }
+
+
+
+
+<span class="nc" id="L48">            grid.deselectAll();</span>
+
+
+
+<span class="nc" id="L52">        });</span>
+<span class="nc" id="L53">        return al;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

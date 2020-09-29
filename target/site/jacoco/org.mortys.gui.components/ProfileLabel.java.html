@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileLabel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.components</a> &gt; <span class="el_source">ProfileLabel.java</span></div><h1>ProfileLabel.java</h1><pre class="source lang-java linenums">package org.mortys.gui.components;
+
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+
+public class ProfileLabel extends HorizontalLayout {
+<span class="nc" id="L12">    Label ibanLabel=null,ustIdLabel=null,telefonnummerLabel,ortLabel,plzLabel,hausnummerLabel,strasseLabel,nachnameLabel,vornameLabel,anredeLabel,firmaLabel=null,geburtsdatumLabel,matrikelnummerLabel=null;</span>
+
+<span class="nc" id="L14">    public ProfileLabel(Unternehmer user){</span>
+<span class="nc" id="L15">        this.setStyleName(&quot;profile_labelContainer&quot;);</span>
+<span class="nc" id="L16">        firmaLabel = new Label(user.getFirmenname());</span>
+<span class="nc" id="L17">        ustIdLabel = new Label(user.getUstId());</span>
+<span class="nc" id="L18">        ibanLabel = new Label(user.getIban());</span>
+<span class="nc" id="L19">        HorizontalLayout body = this.setUp(user);</span>
+<span class="nc" id="L20">        this.addComponent(body);</span>
+<span class="nc" id="L21">    }</span>
+
+<span class="nc" id="L23">    public ProfileLabel(Student user) {</span>
+<span class="nc" id="L24">        this.setStyleName(&quot;profile_labelContainer&quot;);</span>
+<span class="nc" id="L25">        matrikelnummerLabel = new Label(user.getMatrikelnr());</span>
+<span class="nc" id="L26">        HorizontalLayout body = this.setUp(user);</span>
+<span class="nc" id="L27">        this.addComponent(body);</span>
+<span class="nc" id="L28">    }</span>
+
+
+    public HorizontalLayout setUp(User user){
+<span class="nc" id="L32">        HorizontalLayout body = new HorizontalLayout();</span>
+<span class="nc" id="L33">        body.addStyleName(&quot;profile_container&quot;);</span>
+
+<span class="nc" id="L35">        VerticalLayout leftPane = new VerticalLayout();</span>
+<span class="nc" id="L36">        leftPane.setStyleName(&quot;profile_leftPane&quot;);</span>
+
+<span class="nc" id="L38">        VerticalLayout rightPane = new VerticalLayout();</span>
+<span class="nc" id="L39">        rightPane.addStyleName(&quot;profile_rightPane&quot;);</span>
+
+<span class="nc" id="L41">        HorizontalLayout addressContainerOne = new HorizontalLayout();</span>
+<span class="nc" id="L42">        addressContainerOne.setStyleName(&quot;profile_addressContrainerOne&quot;);</span>
+
+<span class="nc" id="L44">        HorizontalLayout addressContainerTwo = new HorizontalLayout();</span>
+<span class="nc" id="L45">        addressContainerTwo.setStyleName(&quot;profile_addressContrainerTwo&quot;);</span>
+
+<span class="nc" id="L47">        HorizontalLayout ibanUstidContainer = new HorizontalLayout();</span>
+<span class="nc" id="L48">        ibanUstidContainer.setStyleName(&quot;profile_ibanUstidContainer&quot;);</span>
+
+<span class="nc" id="L50">        VerticalLayout textContainerLeft = new VerticalLayout();</span>
+<span class="nc" id="L51">        textContainerLeft.setStyleName(&quot;profile_textContainerLeft&quot;);</span>
+
+<span class="nc" id="L53">        VerticalLayout textContainerRight = new VerticalLayout();</span>
+<span class="nc" id="L54">        textContainerRight.setStyleName(&quot;profile_textContainerRight&quot;);</span>
+
+<span class="nc" id="L56">        Label spacing = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L57">        Label spacing2 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L58">        Label spacing3 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L59">        Label spacing4 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L60">        Label spacing5 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+
+<span class="nc" id="L62">        leftPane.addComponent(new ImageUpload(user));</span>
+
+<span class="nc" id="L64">        anredeLabel = new Label(user.getAnrede());</span>
+<span class="nc" id="L65">        vornameLabel = new Label(user.getVorname());</span>
+<span class="nc" id="L66">        nachnameLabel = new Label(user.getNachname());</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if(user.getGeburtsdatum() != null) {geburtsdatumLabel = new Label(&quot;Geb.: &quot;+ user.getGeburtsdatum().toString());}</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        strasseLabel = new Label(user.getAddress() == null ? &quot;&quot; : user.getAddress().getStreet());</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        hausnummerLabel = new Label(user.getAddress() == null ? &quot;&quot; : &quot;&quot; + user.getAddress().getHausnummer());</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        plzLabel = new Label(user.getAddress() == null ? &quot;&quot; : user.getAddress().getPlz());</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        ortLabel = new Label(user.getAddress() == null ? &quot;&quot; : user.getAddress().getOrt());</span>
+<span class="nc" id="L72">        telefonnummerLabel = new Label(user.getTelefon());</span>
+
+<span class="nc" id="L74">        textContainerLeft.addComponent(anredeLabel);</span>
+<span class="nc" id="L75">        textContainerLeft.addComponent(vornameLabel);</span>
+<span class="nc" id="L76">        textContainerLeft.addComponent(nachnameLabel);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if(geburtsdatumLabel != null) textContainerLeft.addComponent(geburtsdatumLabel);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        textContainerLeft.addComponent(user instanceof Student ? matrikelnummerLabel : firmaLabel);</span>
+
+<span class="nc" id="L80">        leftPane.addComponent(textContainerLeft);</span>
+
+<span class="nc" id="L82">            addressContainerOne.addComponent(strasseLabel);</span>
+<span class="nc" id="L83">            addressContainerOne.addComponent(spacing);</span>
+<span class="nc" id="L84">            addressContainerOne.addComponent(hausnummerLabel);</span>
+<span class="nc" id="L85">            addressContainerTwo.addComponent(plzLabel);</span>
+<span class="nc" id="L86">            addressContainerTwo.addComponent(spacing2);</span>
+<span class="nc" id="L87">            addressContainerTwo.addComponent(ortLabel);</span>
+<span class="nc" id="L88">        textContainerRight.addComponent(addressContainerOne);</span>
+<span class="nc" id="L89">        textContainerRight.addComponent(addressContainerTwo);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if(!(user instanceof Student)) ibanUstidContainer.addComponent(ustIdLabel);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            if(!(user instanceof Student)) ibanUstidContainer.addComponent(spacing3);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if(!(user instanceof Student)) ibanUstidContainer.addComponent(ibanLabel);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if(!(user instanceof Student)) textContainerRight.addComponent(ibanUstidContainer);</span>
+<span class="nc" id="L94">        textContainerRight.addComponent(telefonnummerLabel);</span>
+
+<span class="nc" id="L96">        rightPane.addComponent(textContainerRight);</span>
+
+<span class="nc" id="L98">            body.addComponent(leftPane);</span>
+<span class="nc" id="L99">            body.addComponent(rightPane);</span>
+<span class="nc" id="L100">            return body;</span>
+    }
+/*
+    public void setLogo(VerticalLayout pane){
+        Label usrBg = new Label();
+        usrBg.setStyleName(&quot;profile_usrbg&quot;);
+        usrBg.setIcon(VaadinIcons.USER);
+        pane.addComponent(usrBg);
+
+        Label kindOfUser = new Label(/*student != null ? &quot;Student&quot; : &quot;Unternehmer&quot;);
+        kindOfUser.setStyleName(&quot;profile_kindOfUser&quot;);
+        pane.addComponent(kindOfUser);
+    } */
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

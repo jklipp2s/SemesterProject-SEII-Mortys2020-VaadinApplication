@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">AddressDAO.java</span></div><h1>AddressDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Address;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L18">public class AddressDAO extends AbstractDAO {</span>
+    private static AddressDAO addressDAO;
+<span class="fc" id="L20">    private String view = DBViews.USER_HAT_ADDRESSE;</span>
+<span class="fc" id="L21">    private String table = DBTables.TAB_ADRESSE;</span>
+
+    public static AddressDAO getInstance() {
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (addressDAO == null) addressDAO = new AddressDAO();</span>
+
+<span class="fc" id="L27">        return addressDAO;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;Address&gt; fetchAllAddress() throws DatabaseException {
+<span class="fc" id="L33">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L34">        List&lt;Address&gt; addressList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L35">        String sqlBefehl = &quot;Select * FROM &quot; + table + &quot;;&quot;;</span>
+<span class="fc" id="L36">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L37">        ResultSet resultSet = null;</span>
+
+        try {
+<span class="fc" id="L40">            resultSet = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L43">                Address address = new Address();</span>
+<span class="fc" id="L44">                address.setPlz(resultSet.getString(&quot;plz&quot;));</span>
+<span class="fc" id="L45">                address.setOrt(resultSet.getString(&quot;ort&quot;));</span>
+<span class="fc" id="L46">                address.setStreet(resultSet.getString(&quot;street&quot;));</span>
+<span class="fc" id="L47">                address.setStreet(resultSet.getString(&quot;h_nr&quot;));</span>
+
+
+<span class="fc" id="L50">                addressList.add(address);</span>
+<span class="fc" id="L51">            }</span>
+
+<span class="nc" id="L53">        } catch (SQLException e) {</span>
+<span class="nc" id="L54">            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L56">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L57" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L58">        }</span>
+
+<span class="fc" id="L60">        return addressList;</span>
+    }
+
+
+
+    public Address fetchAddress(int id) throws DatabaseException {
+<span class="fc" id="L66">        Address address = new Address();</span>
+
+<span class="fc" id="L68">        String sqlBefehl = &quot;Select * FROM &quot; + view + &quot; where addr_nr = ?;&quot;;</span>
+
+<span class="fc" id="L70">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L71">        ResultSet resultSet = null;</span>
+
+        //String sqlBefehl = &quot;Select * FROM &quot; + view + &quot; where addr_nr = '&quot; + id + &quot;';&quot;;
+
+        try {
+<span class="fc" id="L76">            statement.setInt(1,id);</span>
+<span class="fc" id="L77">            resultSet = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            if (resultSet.next()) {</span>
+
+<span class="fc" id="L81">                address.setPlz(resultSet.getString(&quot;plz&quot;));</span>
+<span class="fc" id="L82">                address.setOrt(resultSet.getString(&quot;ort&quot;));</span>
+<span class="fc" id="L83">                address.setStreet(resultSet.getString(&quot;street&quot;));</span>
+<span class="fc" id="L84">                address.setHausnummer(resultSet.getInt(&quot;h_nr&quot;));</span>
+
+            }
+
+<span class="nc" id="L88">        } catch (SQLException e) {</span>
+<span class="nc" id="L89">            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L91" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L92">        }</span>
+
+<span class="fc" id="L94">        return address;</span>
+    }
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN  -START -----------------------------------------------------------------------------------------
+
+
+    public int persistAddress(Address address) {
+
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (addressAlreadyExists(address)) {</span>
+<span class="fc" id="L104">            return getAddressId(address);</span>
+        }
+
+<span class="nc" id="L107">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(default,?,?,?,?)&quot;;</span>
+<span class="nc" id="L108">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L111">            statement.setString(1, address.getPlz());</span>
+<span class="nc" id="L112">            statement.setString(2, address.getOrt());</span>
+<span class="nc" id="L113">            statement.setString(3, address.getStreet());</span>
+<span class="nc" id="L114">            statement.setInt(4, address.getHausnummer());</span>
+
+
+<span class="nc" id="L117">            statement.executeUpdate();</span>
+
+<span class="nc" id="L119">        } catch (SQLException e) {</span>
+<span class="nc" id="L120">            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L121">        }</span>
+
+<span class="nc" id="L123">        System.out.println(&quot;Adresse erfolgreich gespeichert!&quot;);</span>
+<span class="nc" id="L124">        return getAddressId(address);</span>
+    }
+
+    // PERSISTMETHODEN  -END
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    private int getAddressId(Address address) {
+
+<span class="fc" id="L133">        String sqlBefehl = &quot;SELECT addr_nr  FROM &quot; + table + &quot; WHERE plz = ?&quot; +</span>
+                &quot;AND ort = ? &quot; +
+                &quot;AND street = ? &quot; +
+                &quot;AND h_nr = ?;&quot;;
+<span class="fc" id="L137">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L138">        ResultSet resultSet = null;</span>
+<span class="fc" id="L139">        int addressID = 0;</span>
+        /*String sqlBefehl = &quot;SELECT addr_nr  FROM &quot; + table + &quot; WHERE plz = '&quot; + address.getPlz() + &quot;'&quot; +
+                &quot;AND ort = '&quot; + address.getOrt() + &quot;'\n&quot; +
+                &quot;AND street = '&quot; + address.getStreet() + &quot;'\n&quot; +
+                &quot;AND h_nr = '&quot; + address.getHausnummer() + &quot;';&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L148">            statement.setString(1,address.getPlz());</span>
+<span class="fc" id="L149">            statement.setString(2,address.getOrt());</span>
+<span class="fc" id="L150">            statement.setString(3,address.getStreet());</span>
+<span class="fc" id="L151">            statement.setInt(4,address.getHausnummer());</span>
+
+<span class="fc" id="L153">            resultSet = statement.executeQuery();</span>
+
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if (resultSet.next()) addressID = resultSet.getInt(&quot;addr_nr&quot;);</span>
+
+<span class="nc" id="L157">        } catch (SQLException e) {</span>
+<span class="nc" id="L158">            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L160" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L161">        }</span>
+
+<span class="fc" id="L163">        return addressID;</span>
+    }
+
+    // HILFSMETHODEN -END
+
+    // PRÜFMETHODEN -START ---------------------------------------------------------------------------------------------
+
+    private boolean addressAlreadyExists(Address address) {
+<span class="fc" id="L171">        String sqlBefehl = &quot;SELECT addr_nr  FROM &quot; + table + &quot; WHERE plz = ? &quot; +</span>
+                &quot;AND ort = ? &quot; +
+                &quot;AND street = ? &quot; +
+                &quot;AND h_nr = ?;&quot;;
+
+<span class="fc" id="L176">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L177">        ResultSet resultSet = null;</span>
+<span class="fc" id="L178">        boolean exists = false;</span>
+        /*String sqlBefehl = &quot;SELECT addr_nr  FROM &quot; + table + &quot; WHERE plz = '&quot; + address.getPlz() + &quot;'&quot; +
+                &quot;AND ort = '&quot; + address.getOrt() + &quot;'\n&quot; +
+                &quot;AND street = '&quot; + address.getStreet() + &quot;'\n&quot; +
+                &quot;AND h_nr = '&quot; + address.getHausnummer() + &quot;';&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L187">            statement.setString(1,address.getPlz());</span>
+<span class="fc" id="L188">            statement.setString(2,address.getOrt());</span>
+<span class="fc" id="L189">            statement.setString(3,address.getStreet());</span>
+<span class="fc" id="L190">            statement.setInt(4,address.getHausnummer());</span>
+<span class="fc" id="L191">            resultSet = statement.executeQuery();</span>
+<span class="fc" id="L192">            exists = resultSet.next();</span>
+<span class="nc" id="L193">        } catch (SQLException e) {</span>
+<span class="nc" id="L194">            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, e);;</span>
+        } finally {
+<span class="pc bpc" id="L196" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L197">        }</span>
+
+<span class="fc" id="L199">        return exists;</span>
+    }
+
+    // PRÜFMETHODEN -END
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

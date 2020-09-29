@@ -1,0 +1,1221 @@
+// If you edit this file you need to compile the theme. See README.md for details.
+
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+//$v-font-size: 16px;
+//$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
+
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+//$v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+//@import "../valo/valo.scss";
+
+@import "../valo/valo";
+@mixin mytheme {
+  @include valo;
+
+  //GLOBAL DESIGN LAYOUTS DO NOT EDIT - START
+  &.mytheme.v-app {
+    background-color: transparent;
+  }
+
+  .v-ui {
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  .layout_main {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+    background: url("img/bg.jpg");
+    background-size: cover;
+    position: relative;
+    z-index: 0;
+  }
+  .layout_main::after {
+    content: "";
+    background: rgba(244, 201, 130, 0.8) no-repeat;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .layout_loginRegister {
+    box-sizing: border-box;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .layout_loginRegister::before {
+    content: '';
+    position: absolute;
+    background: url("img/bg.jpg");
+    background-size: cover;
+    width: 65%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+  }
+
+  .layout_loginRegister::after {
+    content: '';
+    background-color: rgba(244, 201, 130, 0.8);
+    position: absolute;
+    width: 65%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+  }
+
+  .layout_profile {
+    box-sizing: border-box;
+    padding-top: 0;
+    padding-bottom: 10px;
+    padding-left: 0;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    position: relative;
+  }
+
+  .layout_profile::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 16rem;
+    left: 0;
+    right: 0;
+    background: url("img/profilebg1.png") repeat;
+    background-size: auto;
+    z-index: -1;
+  }
+
+  .v-slot-login_leftPane {
+    width: 65%;
+  }
+
+  .login_leftPane div:nth-child(2) {
+    height: 50px;
+  }
+
+  .login_container .v-spacing:nth-child(2) {
+    width: 0;
+  }
+
+  .v-button {
+    width: 200px;
+    height: 47px;
+    border: none;
+    outline: none;
+    color: white;
+    box-shadow: none;
+  }
+
+  .v-button:focus:after {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .v-button:active {
+    opacity: 50%;
+  }
+
+  .v-menubar-menuitem {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  .v-menubar .v-menubar-menuitem:nth-of-type(1) {
+    height: 60px !important;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0 !important;
+    width: 100%;
+  }
+
+  .v-menubar > .v-menubar-menuitem:active:before,
+  .v-menubar > .v-menubar-menuitem:hover:before {
+    background-color: transparent;
+  }
+
+  .v-menubar-submenu .v-menubar-menuitem-selected,
+  .v-menubar-popup .v-menubar-menuitem:active::before,
+  .v-menubar-popup .v-menubar-menuitem:hover::before {
+    color: black;
+    background-color: orange !important;
+    opacity: 1;
+  }
+
+  .v-menubar-popup {
+    top: 55px !important;
+  }
+
+  .v-menubar .v-menubar-menuitem-selected,
+  .v-menubar-menuitem-selected:hover {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .v-menubar-menuitem-caption:after {
+    content: "" !important;
+  }
+
+  .v-menubar {
+    border: 0;
+    background-image: none;
+    box-shadow: none;
+    width: 50px;
+    z-index: 1;
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .5s ease-in-out;
+    height: 3px !important;
+    padding: 0 !important;
+    background-color: rgba(0, 0, 0, 1) !important;
+  }
+
+
+  .v-menubar:hover::before,
+  .v-menubar:hover::after {
+    background-color: orange !important;
+  }
+
+  .v-menubar:hover {
+    background-color: transparent !important;
+  }
+
+  .v-menubar:hover::before {
+    transform: rotate(45deg);
+    top: 3px !important;
+  }
+
+  .v-menubar:hover:after {
+    transform: rotate(-45deg);
+    top: 5px !important;
+  }
+
+
+  .v-menubar::before,
+  .v-menubar::after {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: -10px !important;
+    width: 100%;
+    height: 3px;
+    background: inherit;
+    background-color: rgba(0, 0, 0, 1) !important;
+    transition: .5s ease-in-out;
+  }
+
+  .v-menubar::after {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    top: 10px !important;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+
+  .v-textfield {
+    width: 200px;
+    height: 55px;
+    border-top: 0;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 0.5);
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: none;
+    border-radius: 0;
+    outline: none;
+  }
+
+  .v-textfield:focus {
+    width: 200px;
+    height: 55px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 2px solid orange;
+    outline: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+
+  //GLOBAL DESIGN LAYOUTS DO NOT EDIT - END
+
+  // LOGIN PAGE - START
+
+  .login_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    align-content: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .v-slot-login_container {
+    margin-top: auto;
+  }
+
+  .login_leftPane {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login_title {
+    font-size: 6vh;
+    color: white;
+    height: auto;
+    word-break: break-word;
+  }
+
+  .v-slot-login_pageLogo {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 3px 4px rgba(255, 255, 255, 0.5);
+  }
+
+  .login_pageLogo {
+    background: url("img/logo_Mortys.png") no-repeat center;
+    background-size: contain;
+    width: 100%;
+    height: 100px;
+  }
+
+
+  .v-caption-login_icon .v-icon {
+    width: 100%;
+    height: 10vh;
+    font-size: 6vh;
+    color: white;
+  }
+
+  .v-slot-login_rightPane {
+    width: 35%;
+  }
+
+  .login_rightPane {
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login_button {
+    background: orange;
+  }
+
+  .login_rightPane .v-spacing {
+    height: 20px;
+  }
+
+  .login_rightPane .v-spacing:nth-child(4) {
+    height: 40px;
+  }
+
+  //LOGIN PAGE - END
+
+  //Landing Page layout - START
+
+  .landing_main_Container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    align-content: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .v-slot-landing_main_Container {
+    height: 100%;
+  }
+
+  .landing_logoButtonBox {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+
+  .landing_welcomeText {
+    font-size: 35px;
+    color: white;
+    padding-left: 10vw;
+    width: 800px;
+    height: auto;
+    word-break: break-word;
+  }
+
+  .landing_loginButton {
+    background: darkblue;
+  }
+
+  .landing_registerButton {
+    background: orange;
+  }
+
+  .v-label-undef-w {
+    white-space: normal;
+  }
+
+  .landing_buttonBox {
+    padding-bottom: 0px;
+  }
+
+  //Landing Page layout - END
+
+  // FOOTER - START
+
+  .footer_main {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .footer_main_container {
+    //container specific code if needed
+    border-top: 1px solid rgba(0, 0, 0, 0.5);
+
+  }
+
+  .footer_main_container_copyRight {
+    color: rgba(0, 0, 0, 0.5);
+    //  background: -moz-linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(0,0,0,1) 50%, rgba(2,0,36,1) 100%);
+    //  background: -webkit-linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(0,0,0,1) 50%, rgba(2,0,36,1) 100%);
+    //  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(0,0,0,1) 50%, rgba(2,0,36,1) 100%);
+    //   -webkit-background-clip: text;
+    //   -webkit-text-fill-color: transparent;
+  }
+  // FOOTER - END
+
+  // HEADER - START
+
+  .header_main {
+    align-self: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    position: relative;
+    padding: 10px 10px 10px 10px;
+  }
+
+  .header_main_logo {
+    color: white;
+    padding: 0px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .header_main_menuBox {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .header_main_menuBox_headLabel {
+    color: rgba(0, 0, 0, 1);
+    font-weight: bold;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .v-slot-header_main_menuBox {
+    width: 100%;
+  }
+
+  .v-slot-header_main {
+    display: flex;
+    justify-content: center;
+  }
+
+  .v-slot-header_menuBox {
+    height: auto;
+  }
+
+  // HEADER - END
+
+  // PROFILE PAGE STYLES - START
+
+  .profile_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    top: 50px;
+    height: 100%;
+  }
+
+  .profile_fieldContainer,
+  .profile_labelContainer,
+  .v-slot-profile_fieldContainer,
+  .v-slot-profile_labelContainer,
+  .v-slot-footer_main,
+  .v-slot-profile_container {
+    margin-top: auto;
+    width: 100%;
+  }
+
+  .v-slot-profile_textContainerRight,
+  .v-slot-profile_textContainerLeft{
+    width: 100%;
+    height:60%;
+  }
+
+  .profile_textContainerRight,
+  .profile_textContainerLeft{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    font-size: 25px;
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 10%;
+    position:relative;
+    top:1rem;
+    height:100%;
+  }
+
+  .profile_textContainerLeft{
+    margin-left: 1rem;
+  }
+
+  .profile_textContainerRight{
+    top: 2rem;
+    margin-right: 1rem;
+  }
+
+
+  .v-slot-profile_container,
+  .v-slot-profile_fieldContainer,
+  .v-slot-profile_labelContainer,
+  .profile_labelContainer,
+  .profile_fieldContainer {
+    height: 100%;
+    width: 100%;
+  }
+
+  .profile_leftPane,
+  .profile_rightPane {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .profile_usrbg {
+    border-radius: 50%;
+    background-color: #cccccc;
+    width: 250px;
+    height: 250px;
+  }
+
+  .v-caption-profile_usrbg {
+    position: absolute;
+    left: 4rem;
+    z-index: 2;
+    top: 2rem;
+    font-size: 7rem;
+    color: darkgrey;
+  }
+
+  .profile_leftPane .v-spacing {
+    height: 35px;
+  }
+
+  .v-verticallayout-profile_leftPane > .v-slot:first-child {
+    position: absolute;
+    top: -6rem;
+  }
+
+  .v-slot-profile_rightPane .v-spacing {
+    height: 25px;
+  }
+
+  .v-slot-profile_leftPane,
+  .v-slot-profile_rightPane {
+    height: 100%;
+    width: 50%;
+  }
+
+  .v-slot-profile_kindOfUser {
+    position: absolute;
+    top: 4rem;
+    font-weight: bold;
+    color: white;
+    font-size: 60px;
+  }
+
+  .profile_ibanUstidContainer .v-spacing,
+  .profile_addressContrainerOne .v-spacing {
+    width: 0;
+  }
+
+  /* Muss manuell mit Label gemacht werden da Vaadin nicht fähig
+    .v-slot-profile_addressContrainerOne .v-spacing:nth-of-type(6) {
+      width: 5px;
+    }
+  */
+  .profile_addressContrainerTwo .v-spacing {
+    width: 0;
+  }
+
+  /* Muss manuell mit Label gemacht werden da Vaadin nicht fähig
+    .v-slot-profile_addressContrainerTwo .v-spacing:nth-of-type(6) {
+      width: 5px;
+    }
+  */
+  .v-slot-profile_buttonBar {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile_editButton {
+    background: blue;
+  }
+
+  .profile_cancelButton,
+  .profile_deleteButton {
+    background: red;
+  }
+
+  .profile_saveButton {
+    background: green;
+  }
+
+  // PROFILE PAGE STYLES - END
+
+
+  // REGISTER PAGE STYLES - START
+
+  .v-slot-registration_title {
+    height: 40px;
+    font-size: 6vh;
+    color: white;
+    word-break: break-word;
+  }
+
+
+  .v-caption-register_icon .v-icon {
+    width: 100%;
+    height: 10vh;
+    font-size: 12vh;
+    color: white;
+  }
+
+
+  .v-slot-register_rightPane {
+    width: 35%;
+  }
+
+  .register_rightPane {
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .register_rightPane_checkBox {
+    font-weight: bold;
+  }
+
+
+  .v-slot-register_rightPane_checkBox {
+    height: 37px;
+
+  }
+
+
+  // REGISTER PAGE STYLES - END
+
+
+  // COMPONENT TEXTFIELDWITHICON STYLES - START
+
+  .v-slot-textfieldicon {
+    position: absolute;
+    left: 10px;
+  }
+
+
+  .v-slot-textfieldWithIcon {
+    position: relative;
+  }
+
+  .textfieldWithIcon {
+    width: 100%;
+  }
+
+  .v-caption-textfieldicon {
+    font-size: 31px;
+    color: lightgrey;
+  }
+
+  .textfieldplaceholder {
+    font-size: 25px;
+    color: dimgray;
+    position: absolute;
+    left: 60px;
+    top: 5px;
+    font-weight: lighter;
+    cursor: text;
+  }
+
+  // COMPONENT TEXTFIELDWITHICON STYLES - END
+
+  // COMPONENT ERRORWARNING STYLES - START (Type: Label)
+
+  .errorwarning {
+    width: 285px;
+    font-size: 13px;
+    color: red;
+    line-height: 1.2;
+    height: 0px;
+  }
+
+
+  .v-slot-zweizeiler {
+    height: 25px;
+
+  }
+  .v-slot-einzeiler {
+    height: 0px;
+    bottom: 3px;
+  }
+
+
+  .v-slot-errorwarning {
+    position: relative;
+    z-index: 2;
+  }
+
+  .register_rightPane .v-spacing {
+    height: 0px;
+  }
+
+  .register_rightPane .textfieldWithIcon {
+    margin-bottom: 10px;
+  }
+
+
+  // COMPONENT ERRORWARNING STYLES - END (Type: Label)
+
+  // COMPONENT REGISTRATIONSUCCESSWINDOW STYLES - START (Type: Window)
+
+
+  // COMPONENT REGISTRATIONSUCCESSWINDOW STYLES - END (Type: Window)
+
+  // COMPONENT USERPIC WITH UPLOAD - START
+
+  .profile_imageUpload {
+    padding: 0;
+    position: relative;
+    width: 250px;
+    height: 250px;
+  }
+
+  .profile_picRa {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: transparent;
+    background-image: none;
+    width: 250px;
+    height: 250px;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    box-shadow: none;
+  }
+
+  .profile_upload,
+  .v-upload div:nth-of-type(1) div:nth-of-type(1) {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: transparent;
+    background-image: none;
+    width: 250px;
+    height: 250px;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    box-shadow: none;
+    padding: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .gwt-FileUpload {
+    display: none;
+  }
+
+  .v-button:hover:after {
+    box-shadow: none;
+  }
+  .v-upload div:nth-of-type(1) div:nth-of-type(1):hover {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    background-image: none;
+    width: 250px;
+    height: 250px;
+    bottom: 0;
+    z-index: 2;
+    box-shadow: none;
+    padding: 0;
+    visibility: visible;
+  }
+
+  .v-upload div:nth-of-type(1) div:nth-of-type(1) .v-button-caption {
+    visibility: hidden;
+  }
+
+  .v-upload div:nth-of-type(1) div:nth-of-type(1):hover .v-button-caption {
+    visibility: visible;
+  }
+
+
+  // COMPONENT USERPIC WITH UPLOAD - START
+
+
+  // VIEW SEARCHVIEW STYLES - START
+
+
+  .layout_search {
+    box-sizing: border-box;
+    padding-top: 0;
+    padding-bottom: 10px;
+    padding-left: 0;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    position: relative;
+
+  }
+
+  .layout_search::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 75%;
+    top: 12.5%;
+    left: 0;
+    right: 0;
+    background: url("img/bg-cutted.JPG") 0 -36px no-repeat;
+    z-index: -1;
+  }
+
+  .layout_search::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 75%;
+    top: 12.5%;
+    left: 0;
+    right: 0;
+    background: rgba(244, 201, 130, 0.8);
+    z-index: -1;
+
+  }
+
+  .textfieldwidth, .textfieldwidth:focus, .v-slot-textfieldwidth, .searchLeft, .searchRigth, .v-slot-overLayout, .overLayout, .innerCenterWrapper, .v-slot-innerCenterWrapper {
+    width: 100%;
+    max-width: 1080px;
+    padding: 0;
+  }
+
+  .searchWrapper {
+    position: absolute;
+    z-index: 1;
+    top: 30vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .v-slot-searchWrapper_collapsed {
+    position: absolute;
+    z-index: 1;
+    top: -8vh;
+    width: (-webkit-fill-available);
+    display: flex;
+    justify-content: center;
+  }
+
+
+  .hitList td, .hitList th, .hitList thead, .v-grid-tablewrapper, .hitList {
+
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: blur(10px);
+    color: darkblue;
+    font-family: monospace;
+    border: none;
+  }
+
+  .v-grid-row-selected > .v-grid-cell {
+    background: rgba(16, 130, 245, 0.48) !important;
+
+    color: white;
+  }
+
+
+  .hitList th {
+    font-size: 20px;
+  }
+
+  .v-slot-searchLeft, .v-slot-searchRigth {
+    width: 46%;
+    max-width: 450px;
+    min-height: 55px;
+
+  }
+
+
+  // Grids Zelle wird nicht mehr fokussiert
+
+  .v-grid-cell-focused:before {
+    display: none !important;
+  }
+
+
+  .searchWrapper .v-spacing, .nullHeight {
+    height: 0px;
+    width: 0;
+  }
+
+  .nullHeight {
+    width: 100%;
+  }
+
+
+  .marginlabel {
+    margin-top: 11vh;
+    height: 0;
+    width: 100%;
+  }
+
+  .rightLabel, .leftLabel {
+    width: 150px;
+    color: white;
+    font-weight: 400;
+    font-size: 17px;
+  }
+
+
+  .v-slot-collapsedSearchBar {
+    width: 30%;
+    height: 87.5%;
+    min-width: 290px;
+    max-width: 300px;
+  }
+
+  .collapsedSearchBar {
+    padding: 12px 7px 0 7px;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(2px);
+
+  }
+
+
+  .closeButton {
+    width: 0;
+    height: 0;
+    font-size: 20px;
+    top: -12px;
+    color: black;
+  }
+
+
+  .v-slot-openButton {
+    position: absolute;
+    top: 50%;
+    left: -15px;
+  }
+
+  .openButton {
+
+    width: 0;
+    height: 0;
+    font-size: 27px;
+    color: black;
+  }
+
+  .selectButton {
+    width: 0;
+    height: 0;
+    font-size: 23px;
+    color: black;
+  }
+
+  .v-slot-selectButton, .selectButton {
+    width: 0;
+    height: 0;
+  }
+
+  .resultContainer, .v-slot-resultContainer, .collapsedSearchBar {
+    height: 100%;
+  }
+
+
+  .v-filterselect {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 0;
+    margin-bottom: 18px;
+
+  }
+
+  .v-slot-searchRigth {
+    position: relative;
+    margin-left: 15px;
+  }
+
+  .marginlabelDown {
+    margin-top: 15px;
+    width: 100%;
+  }
+
+  .marginlabel {
+    padding: 0px;
+  }
+
+  .v-slot-searchLeft {
+    position: relative;
+    z-index: 1;
+  }
+
+
+  .v-slot-searchButton {
+    width: 6%;
+    max-width: 150px;
+  }
+
+  .searchButton {
+    position: relative;
+    z-index: 1;
+    height: 53.5px;
+    margin-left: 15px;
+    max-width: 150px;
+  }
+
+  .down {
+    top: 26.2px;
+  }
+
+
+  .overLabelStudent {
+    position: absolute;
+    color: white;
+    top: 30vh;
+    text-align: center;
+    width: 100%;
+    font-size: 44px;
+    font-family: cursive;
+    z-index: 1;
+
+  }
+
+  .v-slot-innerCenterWrapper {
+    width: 100%;
+  }
+
+  .innerCenterWrapper {
+    width: 100%;
+    padding: 0;
+  }
+
+
+  .v-filterselect input {
+    color: dimgrey !important;
+    font-weight: lighter !important;
+    text-align: center;
+    font-size: 25px !important;
+    width: 100% !important;
+    min-height: 55px;
+    border-radius: 0px !important;
+  }
+
+  .resultContainer {
+    width: 100%;
+    height: 109%;
+  }
+
+
+ .v-grid-hitList, .hitList, .hitListStudent, .v-grid.hitListStudent {
+    width: (-webkit-fill-available) !important;
+    overflow: auto;
+  }
+
+
+.v-slot-hitListStudent {
+  width: 77% !important;
+  max-width: 170vh !important;
+}
+
+  .v-slot-hitList, .v-slot-hitListStudent {
+    margin-top: 1.3vh;
+  }
+
+  .size-full, .v-slot-size-full {
+    width: 100% !important;
+    max-height: none !important;
+  }
+
+  .v-slot-collapse, .collapse {
+    display: none;
+  }
+
+  .layout_search .header_main_menuBox_headLabel {
+    display: none;
+  }
+
+  // VIEW SEARCHVIEW STYLES - END
+
+  // VIEW STELLENBESCHREIBUNG ADD - START
+
+  .application_container {
+    width: 100%;
+    position: relative;
+    top: 12rem;
+    height: 100%;
+    padding: 0;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .v-slot-application_container{
+    margin-top: auto;
+    width: 100%;
+    height: 100%;
+  }
+
+  .v-textarea{
+    height:15rem;
+    width: 300px;
+    font-weight: lighter;
+    font-size: 25px;
+    color:dimgray;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .v-textarea:focus{
+    outline: none;
+    box-shadow: none;
+    border: 1px solid #c5c5c5
+  }
+
+  .application_labelContainer{
+    padding:0;
+    height:100%
+  }
+  .v-slot-application_labelContainer {
+    width: 100%;
+    height:100%;
+  }
+
+  .v-grid-tablewrapper,
+  .v-grid-mytable,
+  .v-slot-mytable{
+    width:100%;
+  }
+
+  // VIEW STELLENBESCHREIBUNG ADD - END
+
+
+
+
+
+
+
+}

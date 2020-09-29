@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckBoxFeature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.components</a> &gt; <span class="el_source">CheckBoxFeature.java</span></div><h1>CheckBoxFeature.java</h1><pre class="source lang-java linenums">  package org.mortys.gui.components;
+
+  import com.vaadin.ui.CheckBox;
+
+  import javax.validation.constraints.NotNull;
+
+  /**
+   * Component zur Realisierung des Toggle-Patterns
+   *
+   * Bitte (vor allem bei setter-Methoden) stets die CheckBoxFeature Instanzmethoden verwenden!
+   */
+  public class CheckBoxFeature extends CheckBox {
+
+      private String feature;
+
+      public CheckBoxFeature() {
+<span class="nc" id="L17">          super();</span>
+<span class="nc" id="L18">      }</span>
+
+      public String getFeature() {
+<span class="nc" id="L21">          return feature;</span>
+      }
+
+      public void setFeature(String feature) {
+<span class="nc bnc" id="L25" title="All 6 branches missed.">          if (!(feature == null || feature.equals(&quot;&quot;)) || feature.contains(&quot; &quot;))</span>
+<span class="nc" id="L26">              this.feature = feature;</span>
+          else
+<span class="nc" id="L28">              throw new IllegalArgumentException(&quot;feature darf nicht null oder leer sein! &quot;);</span>
+<span class="nc" id="L29">      }</span>
+
+      @NotNull
+      public boolean equals(CheckBoxFeature other) {
+<span class="nc" id="L33">          boolean captionEql = false;</span>
+<span class="nc bnc" id="L34" title="All 4 branches missed.">          if (getCaption() == null || other.getCaption() == null) {</span>
+<span class="nc bnc" id="L35" title="All 6 branches missed.">              if (getCaption() == null ^ other.getCaption() == null)</span>
+<span class="nc" id="L36">                  return false;</span>
+<span class="nc" id="L37">              captionEql = true;</span>
+          } else {
+<span class="nc" id="L39">              captionEql = getCaption().equals(other.getCaption());</span>
+          }
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">          return captionEql</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                  &amp;&amp; getFeature().equals(other.getFeature())</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                  &amp;&amp; getValue() == other.getValue();</span>
+      }
+
+      public String toString() {
+<span class="nc" id="L48">          return &quot;Feature: &quot; + getFeature()</span>
+<span class="nc" id="L49">                  + &quot;, Caption: &quot; + getCaption()</span>
+<span class="nc" id="L50">                  + &quot;, Status: &quot; + getValue();</span>
+      }
+
+  }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

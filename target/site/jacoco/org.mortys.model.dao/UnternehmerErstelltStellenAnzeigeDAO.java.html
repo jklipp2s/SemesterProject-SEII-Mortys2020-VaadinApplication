@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UnternehmerErstelltStellenAnzeigeDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">UnternehmerErstelltStellenAnzeigeDAO.java</span></div><h1>UnternehmerErstelltStellenAnzeigeDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DAOfetcherForStudUntBewerbtErstelltStellenanzeige;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+<span class="fc" id="L21">public class UnternehmerErstelltStellenAnzeigeDAO extends AbstractDAO {</span>
+    private static UnternehmerErstelltStellenAnzeigeDAO unternehmerErstelltStellenAnzeigeDAO;
+<span class="fc" id="L23">    private String table = DBTables.TAB_U_ERSTELLT_ST;</span>
+<span class="fc" id="L24">    private String view = DBViews.UNTERNEHMER_ERSTELLT_STELLENANZEIGE;</span>
+
+    public static UnternehmerErstelltStellenAnzeigeDAO getInstance() {
+
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (unternehmerErstelltStellenAnzeigeDAO == null) {</span>
+<span class="fc" id="L29">            unternehmerErstelltStellenAnzeigeDAO = new UnternehmerErstelltStellenAnzeigeDAO();</span>
+        }
+<span class="fc" id="L31">        return unternehmerErstelltStellenAnzeigeDAO;</span>
+    }
+
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;StellenAnzeige&gt; fetchStellenanzeigeForUnternehmer(Unternehmer unternehmer) throws DatabaseException {
+
+<span class="fc" id="L39">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc" id="L41">        List&lt;StellenAnzeige&gt; stellenAnzeigeList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L43">        ResultSet resultSet = null;</span>
+
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE unternehmer = '&quot; +  unternehmer.getKundennummer() + &quot;';&quot;;
+<span class="fc" id="L46">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE unternehmer = ?;&quot;;</span>
+<span class="fc" id="L47">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L50">            statement.setInt(1,unternehmer.getKundennummer());</span>
+<span class="nc" id="L51">        } catch (SQLException throwables) {</span>
+<span class="nc" id="L52">            Logger.getLogger(StudentBewirbtStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, throwables);</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">        return DAOfetcherForStudUntBewerbtErstelltStellenanzeige.studUntDaoFetcher(statement, stellenAnzeigeList, &quot;&quot;);</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+
+    // PERSISTMETHODEN -START -----------------------------------------------------------------------------
+
+    public void persistUnternehmerErstelltStellenanzeige(Unternehmer unternehmer, StellenAnzeige stellenAnzeige) throws DatabaseException {
+<span class="fc" id="L63">        JDBCConnection.getInstance().openConnection();</span>
+
+
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (stellenAnzeige.getId() == 0)</span>
+<span class="fc" id="L67">            StellenAnzeigeDAO.getInstance().persistStellenAnzeige(stellenAnzeige);</span>
+
+<span class="fc" id="L69">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?,default)&quot;;</span>
+<span class="fc" id="L70">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L73">            statement.setInt(1, unternehmer.getKundennummer());</span>
+<span class="fc" id="L74">            statement.setInt(2, stellenAnzeige.getId());</span>
+<span class="fc" id="L75">            statement.executeUpdate();</span>
+<span class="fc" id="L76">            stellenAnzeige.setErstellungsDatum(getErstellungsDate(stellenAnzeige));</span>
+<span class="fc" id="L77">            stellenAnzeige.setUnternehmen(getFirma(stellenAnzeige));</span>
+<span class="nc" id="L78">        } catch (SQLException e) {</span>
+<span class="nc" id="L79">            Logger.getLogger(UnternehmerErstelltStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L81">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L82">        }</span>
+<span class="fc" id="L83">    }</span>
+    // PERSISTMETHODEN  -END
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    protected LocalDate getErstellungsDate(StellenAnzeige stellenAnzeige) {
+<span class="fc" id="L89">        ResultSet resultSet = null;</span>
+<span class="fc" id="L90">        Date date = null;</span>
+
+        /* String sqlBefehl = &quot;SELECT *  FROM &quot; + table + &quot; WHERE stellenanzeige = '&quot; +
+                stellenAnzeige.getId()  + &quot;';&quot;;
+
+         */
+<span class="fc" id="L96">        String sqlBefehl = &quot;SELECT *  FROM &quot; + table + &quot; WHERE stellenanzeige = ?;&quot;;</span>
+<span class="fc" id="L97">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L100">            statement.setInt(1,stellenAnzeige.getId());</span>
+<span class="fc" id="L101">            resultSet = statement.executeQuery();</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">            if(resultSet.next()) date = resultSet.getDate(&quot;erstelldatum&quot;);</span>
+<span class="nc" id="L103">        } catch (SQLException e) {</span>
+<span class="nc" id="L104">            Logger.getLogger(UnternehmerErstelltStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L106" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L107">        }</span>
+<span class="fc" id="L108">        return date.toLocalDate();</span>
+    }
+
+
+    protected String getFirma(StellenAnzeige stellenAnzeige) {
+<span class="fc" id="L113">        ResultSet resultSet = null;</span>
+<span class="fc" id="L114">        String unternehmen = null;</span>
+
+        /* String sqlBefehl = &quot;SELECT firmenname  FROM &quot; + view + &quot; WHERE id = '&quot; +
+                stellenAnzeige.getId()  + &quot;';&quot;;
+
+         */
+<span class="fc" id="L120">        String sqlBefehl = &quot;SELECT firmenname  FROM &quot; + view + &quot; WHERE id = ?;&quot;;</span>
+<span class="fc" id="L121">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L123">            statement.setInt(1,stellenAnzeige.getId());</span>
+<span class="fc" id="L124">            resultSet = statement.executeQuery();</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">            if(resultSet.next()) unternehmen = resultSet.getString(&quot;firmenname&quot;);</span>
+<span class="nc" id="L126">        } catch (SQLException e) {</span>
+<span class="nc" id="L127">            Logger.getLogger(UnternehmerErstelltStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L129" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L130">        }</span>
+
+<span class="fc" id="L132">        return unternehmen;</span>
+    }
+
+    // HILFSMETHODEN -END
+
+    // LOESCHMETHODEN -START -----------------------------------------------------------------------------------------------
+
+    public void deleteUnternehmerErstelltStellenAnzeige(int id) throws DatabaseException{
+<span class="fc" id="L140">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc" id="L142">        ResultSet resultSet = null;</span>
+
+<span class="fc" id="L144">        String sqlBefehl = &quot;DELETE FROM &quot; + table + &quot; WHERE stellenanzeige = '&quot; + id + &quot;'&quot;;</span>
+
+<span class="fc" id="L146">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L149">            statement.executeUpdate();</span>
+<span class="nc" id="L150">        } catch (SQLException e) {</span>
+<span class="nc" id="L151">            Logger.getLogger(UnternehmerErstelltStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L153">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L154">        }</span>
+
+<span class="fc" id="L156">    }</span>
+
+    // LOESCHMETHODEN -END
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

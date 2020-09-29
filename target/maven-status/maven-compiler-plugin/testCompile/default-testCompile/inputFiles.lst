@@ -1,0 +1,16 @@
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/UnternehmerErstelltStellenAnzeigeDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/StudentDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dto/StudentTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/StellenAnzeigeFodertFertigkeitDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/services/db/JDBCConnectionTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/AddressDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/StudentBewirbtStellenAnzeigeDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/gui/views/MainViewTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/FertigkeitDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/process/control/SearchControlTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/StellenAnzeigeDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dto/UserDTOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/process/control/RegistrationControlTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/UserDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/StudentHatFertigkeitDAOTest.java
+/home/jenkinsbld1/workspace/Mortys/src/test/java/org/mortys/model/dao/UnternehmerDAOTest.java

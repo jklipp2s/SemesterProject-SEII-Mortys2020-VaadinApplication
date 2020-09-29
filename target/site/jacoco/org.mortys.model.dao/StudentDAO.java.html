@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">StudentDAO.java</span></div><h1>StudentDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Student;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.BeschäftigungsArt;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L20">public class StudentDAO extends UserDAO {</span>
+    private static StudentDAO studentDAO;
+<span class="fc" id="L22">    private String table = DBTables.TAB_STUDENT;</span>
+<span class="fc" id="L23">    private String view = DBViews.ALL_STUDENTS;</span>
+
+    public static StudentDAO getInstance() {
+
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (studentDAO == null) studentDAO = new StudentDAO();</span>
+
+<span class="fc" id="L29">        return studentDAO;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;Student&gt; fetchAllUsers() throws DatabaseException {
+<span class="fc" id="L35">        ResultSet studentdata = null;</span>
+<span class="fc" id="L36">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot;;&quot;;</span>
+<span class="fc" id="L37">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L38">        List&lt;Student&gt; userList = new ArrayList&lt;&gt;();</span>
+
+
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot;;&quot;;
+
+        try {
+
+<span class="fc" id="L45">            studentdata = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            while (studentdata.next()) {</span>
+<span class="fc" id="L48">                userList.add(fetchStudent(studentdata));</span>
+            }
+
+<span class="nc" id="L51">        } catch (SQLException e) {</span>
+<span class="nc" id="L52">            Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L54">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L55" title="5 of 6 branches missed.">            try { if (studentdata != null) studentdata.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L56">        }</span>
+
+<span class="fc" id="L58">        return userList;</span>
+    }
+
+
+    public Student fetchUser(String email) throws DatabaseException {
+<span class="fc" id="L63">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L64">        ResultSet studentdata = null;</span>
+<span class="fc" id="L65">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE email = ?;&quot;;</span>
+<span class="fc" id="L66">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE email = '&quot; + email + &quot;';&quot;;
+<span class="fc" id="L70">        Student student = new Student();</span>
+
+        try {
+<span class="fc" id="L73">            statement.setString(1,email);</span>
+<span class="fc" id="L74">            studentdata = statement.executeQuery();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if(studentdata.next()) {</span>
+<span class="fc" id="L76">                student = fetchStudent(studentdata);</span>
+            } else {
+                /*sqlBefehl = &quot;SELECT s.matrikelnr, s.type, u.anrede, u.geburtsdatum, s.email, u.username, u.nachname,\n&quot; +
+                        &quot;                u.vorname, u.telefon, u.regdate, u.password, u.status,\n&quot; +
+                        &quot;                u.adresse, u.avatar FROM &quot; + table +&quot; s, &quot; + DBTables.TAB_USER +&quot; u\n&quot; +
+                        &quot;where s.email = u.email and s.email = '&quot;+ email.trim().toLowerCase() +&quot;';&quot;;
+
+                 */
+<span class="fc" id="L84">                sqlBefehl = &quot;SELECT s.matrikelnr, s.type, u.anrede, u.geburtsdatum, s.email, u.username, u.nachname,\n&quot; +</span>
+                        &quot;                u.vorname, u.telefon, u.regdate, u.password, u.status,\n&quot; +
+                        &quot;                u.adresse, u.avatar FROM &quot; + table +&quot; s, &quot; + DBTables.TAB_USER +&quot; u\n&quot; +
+                        &quot;where s.email = u.email and s.email = ?;&quot;;
+<span class="fc" id="L88">                statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L89">                statement.setString(1,email.trim().toLowerCase());</span>
+<span class="fc" id="L90">                studentdata = statement.executeQuery();</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                if(studentdata.next()){</span>
+<span class="fc" id="L92">                    student = fetchStudent(studentdata);</span>
+                }
+            }
+
+<span class="nc" id="L96">        } catch (SQLException e) {</span>
+<span class="nc" id="L97">            Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L99">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L100" title="5 of 6 branches missed.">            try { if (studentdata != null) studentdata.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L101">        }</span>
+
+<span class="fc" id="L103">        return student;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN -START -----------------------------------------------------------------------------
+
+
+
+    public void registerStudent(Student student, String password) throws DatabaseException {
+<span class="fc" id="L113">        registerUser(student,password);</span>
+
+<span class="fc" id="L115">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?)&quot;;</span>
+<span class="fc" id="L116">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L119">            statement.setString(1, student.getMatrikelnr());</span>
+<span class="fc" id="L120">            statement.setString(2, student.getEmail());</span>
+<span class="fc" id="L121">            statement.executeUpdate();</span>
+<span class="fc" id="L122">            System.out.println(&quot;Student &quot; + student.getUsername() + &quot; erfolgreich registriert!&quot;);</span>
+<span class="nc" id="L123">        } catch (SQLException e) {</span>
+<span class="nc" id="L124">            Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        }
+        finally {
+<span class="pc" id="L127">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L128">        }</span>
+<span class="fc" id="L129">    }</span>
+
+    // PERSISTMETHODEN  -END
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    private Student fetchStudent(ResultSet studentdata) throws SQLException, DatabaseException {
+<span class="fc" id="L136">        Student student = new Student();</span>
+<span class="fc" id="L137">        student.setAnrede(studentdata.getString(&quot;anrede&quot;));</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if(studentdata.getDate(&quot;geburtsdatum&quot;) != null) student.setGeburtsdatum(studentdata.getDate(&quot;geburtsdatum&quot;).toLocalDate());</span>
+<span class="fc" id="L139">        student.setUsername(studentdata.getString(&quot;username&quot;));</span>
+<span class="fc" id="L140">        student.setNachname(studentdata.getString(&quot;nachname&quot;));</span>
+<span class="fc" id="L141">        student.setVorname(studentdata.getString(&quot;vorname&quot;));</span>
+<span class="fc" id="L142">        student.setEmail(studentdata.getString(&quot;email&quot;));</span>
+<span class="fc" id="L143">        student.setTelefon(studentdata.getString(&quot;telefon&quot;));</span>
+<span class="fc" id="L144">        student.setRegistrationDate(studentdata.getDate(&quot;regdate&quot;).toLocalDate());</span>
+<span class="fc" id="L145">        student.setAddress(AddressDAO.getInstance().fetchAddress(studentdata.getInt(&quot;adresse&quot;)));</span>
+<span class="fc" id="L146">        student.setBeschäftigung(studentdata.getString(&quot;type&quot;));</span>
+<span class="fc" id="L147">        student.setMatrikelnr(studentdata.getString(&quot;matrikelnr&quot;));</span>
+<span class="fc" id="L148">        student.setAvatar(studentdata.getString(&quot;avatar&quot;));</span>
+
+<span class="fc" id="L150">        return student;</span>
+    }
+
+    // HILFSMETHODEN -END
+
+    // PRÜFMETHODEN -START ---------------------------------------------------------------------------------------------
+
+
+    public boolean matrNrAlreadyExists(String matrikelnummer) throws DatabaseException {
+<span class="nc" id="L159">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L160">        String sqlBefehl = &quot;SELECT matrikelnr  FROM &quot; + table + &quot; WHERE matrikelnr = ?;&quot;;</span>
+<span class="nc" id="L161">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="nc" id="L162">        ResultSet resultSet = null;</span>
+<span class="nc" id="L163">        boolean exists = false;</span>
+        //String sqlBefehl = &quot;SELECT matrikelnr  FROM &quot; + table + &quot; WHERE matrikelnr = '&quot; + matrikelnummer + &quot;';&quot;;
+
+        try {
+<span class="nc" id="L167">            statement.setString(1,matrikelnummer);</span>
+<span class="nc" id="L168">            resultSet = statement.executeQuery();</span>
+<span class="nc" id="L169">            exists = resultSet.next();</span>
+<span class="nc" id="L170">        } catch (SQLException e) {</span>
+<span class="nc" id="L171">            Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L173">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc bnc" id="L174" title="All 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L175">        }</span>
+
+<span class="nc" id="L177">        return exists;</span>
+    }
+
+    // PRÜFMETHODEN -END
+
+    // SETTERMETHODEN -START ---------------------------------------------------------------------------------------------
+
+
+    public void setBeschäftigung(Student student, String beschäftigungsart) throws DatabaseException {
+<span class="fc" id="L186">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L187">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET type = '&quot; + beschäftigungsart +&quot;' WHERE email = '&quot;</span>
+<span class="fc" id="L188">                + student.getEmail() + &quot;';&quot;;</span>
+<span class="fc" id="L189">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L191">            statement.executeUpdate();</span>
+<span class="fc" id="L192">            System.out.println(&quot;Beschäftigungsart geändert.&quot;);</span>
+<span class="nc" id="L193">        } catch (SQLException e) {</span>
+<span class="nc" id="L194">            Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L196">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L197">        }</span>
+
+<span class="fc" id="L199">    }</span>
+
+
+
+    // SEARCHMETHODEN -START -------------------------------------------------------------------------------------------
+
+    public List&lt;Student&gt; fetchSpecificStudents(String student, String location, String beschaeftigung, String faehigkeiten) throws DatabaseException {
+<span class="fc" id="L206">        ResultSet studentdata = null;</span>
+<span class="fc" id="L207">        Statement statement = getStatement();</span>
+<span class="fc" id="L208">        List&lt;Student&gt; userList = new ArrayList&lt;&gt;();</span>
+
+
+<span class="fc" id="L211">        String sqlBefehl =&quot;&quot;;</span>
+
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if (!faehigkeiten.isEmpty()) sqlBefehl += &quot;&quot;;</span>
+
+<span class="fc" id="L215">            String studentSearch = &quot;(username ILIKE '%&quot; + student + &quot;%' or nachname ILIKE '%&quot; + student + &quot;%'\n&quot; +</span>
+                    &quot;or vorname ILIKE '%&quot; + student + &quot;%' or s.matrikelnr ILIKE '%&quot; + student + &quot;%'  or s.email ILIKE '%&quot; + student + &quot;%')&quot;;
+<span class="fc" id="L217">            String locationSearch = &quot;ort ILIKE '%&quot; + location + &quot;%'&quot;;</span>
+<span class="fc" id="L218">            String beschaeftigungSearch = &quot;type ILIKE '&quot; + beschaeftigung + &quot;'&quot;;</span>
+<span class="fc" id="L219">            String faehigkeitenSearch = &quot;&quot; + separatedStatement(faehigkeiten, &quot;fertigkeiten&quot;) + &quot; or &quot; + separatedStatement(faehigkeiten,&quot;beschreibungen&quot;) + &quot;) l&quot;;</span>
+
+
+<span class="pc bpc" id="L222" title="6 of 8 branches missed.">            sqlBefehl = student.isEmpty() &amp;&amp; location.isEmpty() &amp;&amp; beschaeftigung.isEmpty() &amp;&amp; faehigkeiten.isEmpty() ?</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">                    &quot;SELECT * FROM &quot; + view + &quot;;&quot; : !faehigkeiten.isEmpty() ?</span>
+                    &quot;SELECT * FROM (SELECT * FROM ( SELECT DISTINCT ON (username) * FROM &quot; + view + &quot; s, &quot; + DBViews.STUDENT_HAT_FERTIGKEIT + &quot; f &quot; + &quot;where  &quot; +
+                            &quot;f.matrikelnr = s.matrikelnr &quot; :
+                    &quot; SELECT * FROM &quot; + view + &quot; s where &quot;;
+
+<span class="pc bpc" id="L228" title="3 of 4 branches missed.">            if (!student.isEmpty()) sqlBefehl += faehigkeiten.isEmpty() ? studentSearch : &quot; and &quot; + studentSearch;</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (!location.isEmpty())</span>
+<span class="pc bpc" id="L230" title="2 of 4 branches missed.">                sqlBefehl += faehigkeiten.isEmpty() &amp;&amp; student.isEmpty() ? locationSearch : &quot; and &quot; + locationSearch;</span>
+<span class="pc bpc" id="L231" title="3 of 4 branches missed.">            if (!beschaeftigung.isEmpty() &amp;&amp; !beschaeftigung.equals(BeschäftigungsArt.ALL))</span>
+<span class="nc bnc" id="L232" title="All 6 branches missed.">                sqlBefehl += faehigkeiten.isEmpty() &amp;&amp; student.isEmpty() &amp;&amp; location.isEmpty() ? beschaeftigungSearch : &quot; and &quot; + beschaeftigungSearch;</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">            if (!faehigkeiten.isEmpty()) sqlBefehl += &quot;) i where &quot; + faehigkeitenSearch;</span>
+<span class="fc" id="L234">            sqlBefehl += &quot;;&quot;;</span>
+            try {
+
+<span class="fc" id="L237">                studentdata = statement.executeQuery(sqlBefehl);</span>
+
+<span class="fc bfc" id="L239" title="All 2 branches covered.">                while (studentdata.next()) {</span>
+<span class="fc" id="L240">                    userList.add(fetchStudent(studentdata));</span>
+                }
+
+<span class="nc" id="L243">            } catch (SQLException e) {</span>
+<span class="nc" id="L244">                Logger.getLogger(StudentDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L245">                System.out.println(sqlBefehl);</span>
+
+            } finally {
+<span class="pc" id="L248">                JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L249" title="5 of 6 branches missed.">                try { if (studentdata != null) studentdata.close(); } catch (Exception exc) { }</span>
+<span class="pc" id="L250">                System.out.println(sqlBefehl);</span>
+<span class="pc" id="L251">            }</span>
+
+<span class="fc" id="L253">            return userList;</span>
+        }
+
+
+
+    private String separatedStatement(String faehigkeiten, String column) {
+
+<span class="fc" id="L260">        String[] output = faehigkeiten.split(&quot;,&quot;);</span>
+
+
+<span class="fc" id="L263">        String faehigkeitenSeparated = &quot;(&quot;;</span>
+
+<span class="fc bfc" id="L265" title="All 2 branches covered.">            for (int i = 0; i &lt; output.length; i++) {</span>
+<span class="fc" id="L266">                faehigkeitenSeparated +=  column + &quot; ILIKE ( '%&quot; + output[i].trim() + &quot;%')&quot;;</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                if(i &lt; output.length-1) {</span>
+<span class="nc" id="L268">                    faehigkeitenSeparated += &quot; and &quot;;</span>
+                }
+            }
+
+<span class="fc" id="L272">            faehigkeitenSeparated += &quot;)&quot;;</span>
+
+
+<span class="fc" id="L275">            return faehigkeitenSeparated;</span>
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

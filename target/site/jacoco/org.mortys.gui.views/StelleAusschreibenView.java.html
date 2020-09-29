@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StelleAusschreibenView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.views</a> &gt; <span class="el_source">StelleAusschreibenView.java</span></div><h1>StelleAusschreibenView.java</h1><pre class="source lang-java linenums">package org.mortys.gui.views;
+
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.*;
+import org.mortys.gui.components.ApplicationBody;
+import org.mortys.gui.components.ApplicationList;
+import org.mortys.gui.components.Footer;
+import org.mortys.gui.components.Header;
+import org.mortys.model.dao.UnternehmerErstelltStellenAnzeigeDAO;
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.UserFetcher;
+import org.mortys.services.util.Views;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class StelleAusschreibenView extends VerticalLayout implements View {
+<span class="nc" id="L25">    Student student = null;</span>
+<span class="nc" id="L26">    Unternehmer unternehmer = null;</span>
+<span class="nc" id="L27">    User user = null;</span>
+<span class="nc" id="L28">    StellenAnzeige stellenAnzeige = null;</span>
+<span class="nc" id="L29">    String mode = &quot;list&quot;;</span>
+    ApplicationBody body;
+<span class="nc" id="L31">    Header header = new Header(true);</span>
+<span class="nc" id="L32">    Footer footer = new Footer();</span>
+    ApplicationList list;
+
+<span class="nc" id="L35">    public StelleAusschreibenView(){</span>
+<span class="nc" id="L36">        this.user = UserFetcher.getUser();</span>
+<span class="nc" id="L37">    }</span>
+
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+<span class="nc" id="L43">        this.user = UserFetcher.getUser();</span>
+
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L46">            UI.getCurrent().getNavigator().navigateTo(Views.MAIN);</span>
+        } else {
+<span class="nc" id="L48">            this.setUp();</span>
+        }
+
+<span class="nc" id="L51">    }</span>
+
+    public void setUp() {
+
+        //Layout setup - START
+<span class="nc" id="L56">        addComponent(header);</span>
+<span class="nc" id="L57">        this.setStyleName(&quot;layout_profile&quot;);</span>
+
+<span class="nc" id="L59">        HorizontalLayout buttonBar = new HorizontalLayout();</span>
+<span class="nc" id="L60">        buttonBar.setStyleName(&quot;profile_buttonBar&quot;);</span>
+
+        //Layout setup - END
+
+        // LABELS - START
+<span class="nc" id="L65">        list = new ApplicationList((Unternehmer)user);</span>
+        //LABELS - END
+
+        // Button Group - START
+<span class="nc" id="L69">        Button newApplicationButton = new Button(&quot;Stelle ausschreiben&quot;);</span>
+<span class="nc" id="L70">        newApplicationButton.setStyleName(&quot;profile_editButton&quot;);</span>
+
+<span class="nc" id="L72">        Button newSendApplicationOfferButton = new Button(&quot;Stelle ausschreiben&quot;);</span>
+<span class="nc" id="L73">        newSendApplicationOfferButton.setStyleName(&quot;profile_saveButton&quot;);</span>
+
+<span class="nc" id="L75">        buttonBar.addComponent(newApplicationButton);</span>
+        // Button Group - END
+
+<span class="nc" id="L78">        this.addComponent(list);</span>
+<span class="nc" id="L79">        this.addComponent(buttonBar);</span>
+<span class="nc" id="L80">        this.addComponent(footer);</span>
+
+        //Button Logic
+
+<span class="nc" id="L84">        newSendApplicationOfferButton.addClickListener(e -&gt; {</span>
+
+<span class="nc" id="L86">            this.user = UserFetcher.getUser();</span>
+
+<span class="nc bnc" id="L88" title="All 6 branches missed.">            if(body.getBeschreibungField().getValue() == &quot;&quot; || body.getStatusFieldBasic().getValue() == &quot;&quot; || body.getTitelFieldBasic().getValue() == &quot;&quot; ){</span>
+<span class="nc" id="L89">                Notification.show(&quot;Error&quot;,&quot;Bitte alle Felder ausfüllen&quot;,Notification.Type.ERROR_MESSAGE);</span>
+            }
+            else {
+<span class="nc" id="L92">                stellenAnzeige = new StellenAnzeige();</span>
+<span class="nc" id="L93">                stellenAnzeige.setStatus(body.getStatusFieldBasic().getValue());</span>
+<span class="nc" id="L94">                stellenAnzeige.setBeschreibung(body.getBeschreibungField().getValue());</span>
+
+<span class="nc" id="L96">                stellenAnzeige.setTitel(body.getTitelFieldBasic().getValue());</span>
+
+<span class="nc" id="L98">                persistUnternehmerErstelltStellenanzeige((Unternehmer)user, stellenAnzeige);</span>
+
+<span class="nc" id="L100">                this.removeComponent(body);</span>
+<span class="nc" id="L101">                this.removeComponent(buttonBar);</span>
+<span class="nc" id="L102">                this.removeComponent(footer);</span>
+<span class="nc" id="L103">                buttonBar.removeComponent(newSendApplicationOfferButton);</span>
+<span class="nc" id="L104">                newApplicationButton.setStyleName(&quot;profile_editButton&quot;);</span>
+<span class="nc" id="L105">                newApplicationButton.setCaption(&quot;Stelle ausschreiben&quot;);</span>
+<span class="nc" id="L106">                list = new ApplicationList((Unternehmer) user);</span>
+
+<span class="nc" id="L108">                this.addComponent(list);</span>
+<span class="nc" id="L109">                this.addComponent(buttonBar);</span>
+<span class="nc" id="L110">                this.addComponent(footer);</span>
+<span class="nc" id="L111">                mode = &quot;list&quot;;</span>
+            }
+<span class="nc" id="L113">        });</span>
+
+<span class="nc" id="L115">        newApplicationButton.addClickListener(e -&gt; {</span>
+<span class="nc" id="L116">            this.user = UserFetcher.getUser();</span>
+
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if(mode.equals(&quot;list&quot;)){</span>
+<span class="nc" id="L119">                this.removeComponent(list);</span>
+<span class="nc" id="L120">                newApplicationButton.setCaption(&quot;Cancel&quot;);</span>
+<span class="nc" id="L121">                newApplicationButton.setStyleName(&quot;profile_cancelButton&quot;);</span>
+<span class="nc" id="L122">                this.removeComponent(buttonBar);</span>
+<span class="nc" id="L123">                this.removeComponent(footer);</span>
+<span class="nc" id="L124">                body = new ApplicationBody();</span>
+<span class="nc" id="L125">                this.addComponent(body);</span>
+<span class="nc" id="L126">                buttonBar.addComponent(newSendApplicationOfferButton);</span>
+<span class="nc" id="L127">                this.addComponent(buttonBar);</span>
+<span class="nc" id="L128">                this.addComponent(footer);</span>
+<span class="nc" id="L129">                mode = &quot;&quot;;</span>
+            } else {
+<span class="nc" id="L131">                mode = &quot;list&quot;;</span>
+<span class="nc" id="L132">                this.removeComponent(footer);</span>
+<span class="nc" id="L133">                this.removeComponent(body);</span>
+<span class="nc" id="L134">                list = new ApplicationList((Unternehmer)user);</span>
+<span class="nc" id="L135">                newApplicationButton.setStyleName(&quot;profile_editButton&quot;);</span>
+<span class="nc" id="L136">                newApplicationButton.setCaption(&quot;Stelle ausschreiben&quot;);</span>
+<span class="nc" id="L137">                buttonBar.removeComponent(newSendApplicationOfferButton);</span>
+<span class="nc" id="L138">                this.addComponent(list);</span>
+<span class="nc" id="L139">                this.addComponent(buttonBar);</span>
+<span class="nc" id="L140">                this.addComponent(footer);</span>
+            }
+<span class="nc" id="L142">        });</span>
+<span class="nc" id="L143">    }</span>
+    private void persistUnternehmerErstelltStellenanzeige(Unternehmer unternehmer,StellenAnzeige stellenAnzeige){
+        try {
+<span class="nc" id="L146">            UnternehmerErstelltStellenAnzeigeDAO.getInstance().persistUnternehmerErstelltStellenanzeige(unternehmer,stellenAnzeige);</span>
+<span class="nc" id="L147">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L148">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L149">        }</span>
+<span class="nc" id="L150">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

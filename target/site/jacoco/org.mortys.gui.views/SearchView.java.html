@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SearchView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.views</a> &gt; <span class="el_source">SearchView.java</span></div><h1>SearchView.java</h1><pre class="source lang-java linenums">package org.mortys.gui.views;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.*;
+import org.mortys.gui.components.Footer;
+import org.mortys.gui.components.GridCallbackValueProvider;
+import org.mortys.gui.components.Header;
+import org.mortys.gui.components.TextFieldWithIcon;
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.SearchControl;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.util.BeschäftigungsArt;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.UserFetcher;
+import org.mortys.services.util.Views;
+
+import java.util.List;
+
+public class SearchView extends VerticalLayout implements View {
+<span class="nc" id="L25">    Student student = null;</span>
+<span class="nc" id="L26">    Unternehmer unternehmer = null;</span>
+<span class="nc" id="L27">    User user = null;</span>
+    private Label headerLabel;
+    private TextFieldWithIcon searchLeft;
+    private TextFieldWithIcon searchRight;
+    private TextFieldWithIcon searchRightDown;
+    private ComboBox searchLeftDown;
+    private Button searchButton;
+    private HorizontalLayout resultContainer;
+    private Grid hitList;
+
+
+<span class="nc" id="L38">    public SearchView(){</span>
+<span class="nc" id="L39">        this.user = UserFetcher.getUser();</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if(user instanceof Student){</span>
+<span class="nc" id="L41">            student= (Student)user;</span>
+        } else {
+<span class="nc" id="L43">            unternehmer = (Unternehmer)user;</span>
+        }
+<span class="nc" id="L45">    }</span>
+/*
+    public void fetchUser(){
+        if ( UI.getCurrent().getSession().getAttribute(Roles.STUDENT) instanceof Student ) {
+            student = (Student) UI.getCurrent().getSession().getAttribute(Roles.STUDENT);
+            user = student;
+        } else {
+            unternehmer = (Unternehmer) UI.getCurrent().getSession().getAttribute(Roles.UNTERNEHMER);
+            user = unternehmer;
+        }
+    }
+*/
+
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+<span class="nc" id="L62">        this.user = UserFetcher.getUser();</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if(user instanceof Student){</span>
+<span class="nc" id="L64">            student= (Student)user;</span>
+        } else {
+<span class="nc" id="L66">            unternehmer = (Unternehmer)user;</span>
+        }
+
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L70">            UI.getCurrent().getNavigator().navigateTo(Views.MAIN);</span>
+        } else {
+<span class="nc" id="L72">            this.setUp();</span>
+        }
+
+<span class="nc" id="L75">    }</span>
+
+
+    public void setUp() {
+
+<span class="nc" id="L80">        boolean isUnternehmer = user instanceof Unternehmer;</span>
+<span class="nc" id="L81">        Header header = new Header(true);</span>
+<span class="nc" id="L82">        addComponent(header);</span>
+<span class="nc" id="L83">        this.setStyleName(&quot;layout_search&quot;);</span>
+
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        headerLabel = new Label(isUnternehmer ? &quot;FINDE PASSENDE BEWERBER&quot; : &quot;FINDE DEIN UNTERNEHMEN&quot;);</span>
+<span class="nc" id="L87">        headerLabel.setStyleName(&quot;overLabelStudent&quot;);</span>
+<span class="nc" id="L88">        this.addComponent(headerLabel);</span>
+
+
+
+<span class="nc" id="L92">        searchButton = new Button(&quot;Search&quot;);</span>
+<span class="nc" id="L93">        searchButton.setStyleName(&quot;landing_loginButton searchButton&quot;);</span>
+
+
+
+<span class="nc" id="L97">        searchLeft = getFirst(isUnternehmer);</span>
+<span class="nc" id="L98">        searchRight = getSecond();</span>
+
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        HorizontalLayout innerCenterWrapper = isUnternehmer ? null : new HorizontalLayout(searchLeft, searchRight);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        VerticalLayout innerVerticalLayout = isUnternehmer ? null : new VerticalLayout(innerCenterWrapper);</span>
+<span class="nc" id="L103">        VerticalLayout centerWrapper = new VerticalLayout();</span>
+<span class="nc" id="L104">        centerWrapper.setStyleName(&quot;innerCenterWrapper&quot;);</span>
+
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (!isUnternehmer) {</span>
+<span class="nc" id="L108">            innerCenterWrapper.addComponent(searchButton);</span>
+<span class="nc" id="L109">            searchRight.setStyleName(&quot;searchRigth&quot;);</span>
+<span class="nc" id="L110">            searchLeft.setStyleName(&quot;searchLeft&quot;);</span>
+<span class="nc" id="L111">            innerCenterWrapper.setStyleName(&quot;innerCenterWrapper&quot;);</span>
+<span class="nc" id="L112">            innerVerticalLayout.setStyleName(&quot;innerVerticalLayout&quot;);</span>
+<span class="nc" id="L113">            innerVerticalLayout.setStyleName(&quot;marginlabel&quot;);</span>
+<span class="nc" id="L114">            centerWrapper.addComponent(innerVerticalLayout);</span>
+
+        }
+
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (isUnternehmer) {</span>
+<span class="nc" id="L120">            Label left = new Label(&quot;Student&quot;);</span>
+<span class="nc" id="L121">            left.setStyleName(&quot;leftLabel&quot;);</span>
+<span class="nc" id="L122">            Label leftd = new Label(&quot;Beschäftigungsart&quot;);</span>
+<span class="nc" id="L123">            leftd.setStyleName(&quot;leftLabel&quot;);</span>
+<span class="nc" id="L124">            Label right = new Label(&quot;Ort&quot;);</span>
+<span class="nc" id="L125">            right.setStyleName(&quot;rightLabel&quot;);</span>
+<span class="nc" id="L126">            Label rightd = new Label(&quot;Fähigkeiten&quot;);</span>
+<span class="nc" id="L127">            rightd.setStyleName(&quot;rightLabel&quot;);</span>
+
+
+
+<span class="nc" id="L131">            VerticalLayout vertLeft = new VerticalLayout(left, getFirst(isUnternehmer));</span>
+<span class="nc" id="L132">            VerticalLayout vertright = new VerticalLayout(right, getSecond());</span>
+<span class="nc" id="L133">            VerticalLayout vertLeftd = new VerticalLayout(leftd, getThird());</span>
+<span class="nc" id="L134">            VerticalLayout vertrightd = new VerticalLayout(rightd, getFourth());</span>
+<span class="nc" id="L135">            vertLeft.setStyleName(&quot;searchLeft&quot;);</span>
+<span class="nc" id="L136">            vertLeftd.setStyleName(&quot;searchLeft&quot;);</span>
+<span class="nc" id="L137">            vertright.setStyleName(&quot;searchRigth&quot;);</span>
+<span class="nc" id="L138">            vertrightd.setStyleName(&quot;searchRigth&quot;);</span>
+
+
+<span class="nc" id="L141">            innerCenterWrapper = new HorizontalLayout(vertLeft, vertright);</span>
+<span class="nc" id="L142">            innerCenterWrapper.setStyleName(&quot;innerCenterWrapper&quot;);</span>
+<span class="nc" id="L143">            HorizontalLayout innerCenterWrapperDown = new HorizontalLayout(vertLeftd, vertrightd, searchButton);</span>
+<span class="nc" id="L144">            innerCenterWrapperDown.setStyleName(&quot;innerCenterWrapper&quot;);</span>
+
+<span class="nc" id="L146">            innerVerticalLayout = new VerticalLayout(innerCenterWrapper, innerCenterWrapperDown);</span>
+<span class="nc" id="L147">            innerVerticalLayout.setStyleName(&quot;innerVerticalLayout&quot;);</span>
+<span class="nc" id="L148">            innerVerticalLayout.setStyleName(&quot;marginlabel&quot;);</span>
+
+
+<span class="nc" id="L151">            searchButton.addStyleName(&quot;down&quot;);</span>
+
+
+<span class="nc" id="L154">            centerWrapper.addComponent(innerVerticalLayout);</span>
+        }
+
+
+
+
+
+<span class="nc" id="L161">        HorizontalLayout searchWrapper = new HorizontalLayout(centerWrapper);</span>
+<span class="nc" id="L162">        searchWrapper.setStyleName(&quot;searchWrapper&quot;);</span>
+
+<span class="nc" id="L164">        this.addComponents(searchWrapper);</span>
+<span class="nc" id="L165">        this.addComponent(new Footer());</span>
+
+        //Logic
+
+<span class="nc" id="L169">        searchButton.addClickListener(e -&gt; {</span>
+
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (isUnternehmer) {</span>
+<span class="nc" id="L172">                setUpStudentenSearch(isUnternehmer, searchWrapper);</span>
+            } else {
+<span class="nc" id="L174">                setUpStellenanzeigenSearch(isUnternehmer, searchWrapper);</span>
+            }
+
+<span class="nc" id="L177">        });</span>
+
+
+
+
+
+<span class="nc" id="L183">    }</span>
+
+    private void setUpStudentenSearch(boolean isUnternehmer, HorizontalLayout searchWrapper) {
+<span class="nc bnc" id="L186" title="All 6 branches missed.">        if (getFirst(isUnternehmer).getValue().isEmpty() &amp;&amp; getSecond().getValue().isEmpty() &amp;&amp; getFourth().getValue().isEmpty()) {</span>
+<span class="nc" id="L187">            Notification.show(&quot;Fehler&quot;, &quot;Bitte wählen Sie mindestens einen Suchbegriff&quot;, Notification.Type.WARNING_MESSAGE);</span>
+<span class="nc" id="L188">            return;</span>
+        }
+
+
+
+
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if(hitList == null) hitList = getHitlistStudent();</span>
+
+<span class="nc" id="L196">        headerLabel.setVisible(false);</span>
+
+<span class="nc" id="L198">        List&lt;Student&gt; list = null;</span>
+
+        try {
+<span class="nc" id="L201">            list = SearchControl.getInstance().searchStellenStudenten(getFirst(isUnternehmer).getValue(), getSecond().getValue(),</span>
+<span class="nc" id="L202">                    getThird().getValue().toString(), getFourth().getValue());</span>
+<span class="nc" id="L203">        } catch (DatabaseException ex2) {</span>
+<span class="nc" id="L204">            Notification.show(&quot;DB-Fehler&quot;, ex2.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L205">        }</span>
+
+<span class="nc" id="L207">        hitList.setItems(list);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        hitList.setHeightByRows(list.size() &gt; 0 ? list.size() : 1);</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (list.size() == 0) {</span>
+<span class="nc" id="L210">            Notification.show(&quot;Die Suche war leider ergebnislos&quot;, Notification.Type.HUMANIZED_MESSAGE);</span>
+        }
+
+
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if(resultContainer == null) {</span>
+<span class="nc" id="L215">            this.removeComponent(searchWrapper);</span>
+<span class="nc" id="L216">            this.searchButton.removeStyleName(&quot;searchButton&quot;);</span>
+<span class="nc" id="L217">            Button closeButton = new Button(VaadinIcons.CLOSE);</span>
+<span class="nc" id="L218">            closeButton.setStyleName(&quot;closeButton&quot;);</span>
+<span class="nc" id="L219">            VerticalLayout collapsedSearchBar = new VerticalLayout(closeButton, getFirst(isUnternehmer), getSecond(),</span>
+<span class="nc" id="L220">                    getThird(), getFourth(), searchButton);</span>
+<span class="nc" id="L221">            collapsedSearchBar.setStyleName(&quot;collapsedSearchBar&quot;);</span>
+<span class="nc" id="L222">            collapsedSearchBar.setComponentAlignment(searchButton, Alignment.MIDDLE_CENTER);</span>
+<span class="nc" id="L223">            collapsedSearchBar.setComponentAlignment(closeButton, Alignment.TOP_RIGHT);</span>
+<span class="nc" id="L224">            resultContainer = new HorizontalLayout(collapsedSearchBar, hitList);</span>
+<span class="nc" id="L225">            resultContainer.setStyleName(&quot;resultContainer&quot;);</span>
+<span class="nc" id="L226">            this.addComponent(resultContainer, getComponentCount()-1);</span>
+
+<span class="nc" id="L228">            closeButton.addClickListener(e -&gt; {</span>
+<span class="nc" id="L229">                hitList.addStyleName(&quot;size-full&quot;);</span>
+<span class="nc" id="L230">                collapsedSearchBar.setStyleName(&quot;collapse&quot;);</span>
+<span class="nc" id="L231">                Button recollapseSearchBarButton = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT);</span>
+<span class="nc" id="L232">                recollapseSearchBarButton.setStyleName(&quot;openButton&quot;);</span>
+<span class="nc" id="L233">                this.addComponent(recollapseSearchBarButton);</span>
+<span class="nc" id="L234">                recollapseSearchBarButton.addClickListener(b -&gt; {</span>
+<span class="nc" id="L235">                    collapsedSearchBar.setStyleName(&quot;collapsedSearchBar&quot;);</span>
+<span class="nc" id="L236">                    hitList.setStyleName(&quot;hitList hitListStudent&quot;);</span>
+<span class="nc" id="L237">                    removeComponent(recollapseSearchBarButton);</span>
+<span class="nc" id="L238">                });</span>
+
+
+<span class="nc" id="L241">            });</span>
+
+        }
+
+<span class="nc" id="L245">    }</span>
+
+
+    public void setUpStellenanzeigenSearch(boolean isUnternehmer, HorizontalLayout searchWrapper) {
+<span class="nc bnc" id="L249" title="All 4 branches missed.">        if (getFirst(isUnternehmer).getValue().isEmpty() &amp;&amp; getSecond().getValue().isEmpty()) {</span>
+<span class="nc" id="L250">            Notification.show(&quot;Fehler&quot;, &quot;Bitte tippen sie etwas in die Beiden Felder ein&quot;, Notification.Type.WARNING_MESSAGE);</span>
+<span class="nc" id="L251">            return;</span>
+        }
+
+<span class="nc" id="L254">        searchWrapper.removeStyleName(&quot;searchWrapper&quot;);</span>
+<span class="nc" id="L255">        searchWrapper.addStyleName(&quot;searchWrapper_collapsed&quot;);</span>
+<span class="nc" id="L256">        headerLabel.setVisible(false);</span>
+
+<span class="nc" id="L258">        List&lt;StellenAnzeige&gt; list = null;</span>
+
+        try {
+<span class="nc" id="L261">            list = SearchControl.getInstance().searchStellenAnzeigen(getFirst(isUnternehmer).getValue(), getSecond().getValue());</span>
+<span class="nc" id="L262">        } catch (DatabaseException ex2) {</span>
+<span class="nc" id="L263">            Notification.show(&quot;DB-Fehler&quot;, ex2.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L264">        }</span>
+
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if(hitList == null) hitList = getHitlistStellenAnzeige();</span>
+
+<span class="nc" id="L268">        hitList.setItems(list);</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        hitList.setHeightByRows(list.size() &gt; 0 ? list.size() : 1);</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (list.size() == 0) {</span>
+<span class="nc" id="L271">            Notification.show(&quot;Die Suche war leider ergebnislos&quot;, Notification.Type.HUMANIZED_MESSAGE);</span>
+        }
+
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if(!hitList.isAttached()) this.addComponent(hitList, getComponentCount()-1);</span>
+<span class="nc" id="L275">    }</span>
+
+    private Grid&lt;StellenAnzeige&gt; getHitlistStellenAnzeige() {
+<span class="nc" id="L278">        Grid&lt;StellenAnzeige&gt; hitList = new Grid&lt;&gt;();</span>
+<span class="nc" id="L279">        hitList.addColumn(StellenAnzeige::getId).setCaption(&quot;Id&quot;);</span>
+<span class="nc" id="L280">        hitList.addColumn(StellenAnzeige::getUnternehmen).setCaption(&quot;Firma&quot;);</span>
+<span class="nc" id="L281">        hitList.addColumn(StellenAnzeige::getErstellungsDatum).setCaption(&quot;Veröffentlichung&quot;);</span>
+<span class="nc" id="L282">        hitList.addColumn(StellenAnzeige::getTitel).setCaption(&quot;Titel&quot;);</span>
+<span class="nc" id="L283">        hitList.addColumn(StellenAnzeige::getOrt).setCaption(&quot;Ort&quot;);</span>
+<span class="nc" id="L284">        hitList.setStyleName(&quot;hitList&quot;);</span>
+<span class="nc" id="L285">        hitList.addComponentColumn(new GridCallbackValueProvider(hitList));</span>
+
+
+<span class="nc" id="L288">        return hitList;</span>
+    }
+
+    private Grid&lt;Student&gt; getHitlistStudent() {
+
+<span class="nc" id="L293">        Grid&lt;Student&gt; hitList = new Grid&lt;&gt;();</span>
+<span class="nc" id="L294">        hitList.addColumn(Student::getBeschäftigung).setCaption(&quot;Beschäftigung&quot;);</span>
+<span class="nc" id="L295">        hitList.addColumn(User::getOrt).setCaption(&quot;Ort&quot;);</span>
+<span class="nc" id="L296">        hitList.addColumn(User::getEmail).setCaption(&quot;Email&quot;);</span>
+<span class="nc" id="L297">        hitList.addColumn(Student::getSoftskills).setCaption(&quot;Fertigkeiten&quot;);</span>
+<span class="nc" id="L298">        hitList.setStyleName(&quot;hitList hitListStudent&quot;);</span>
+<span class="nc" id="L299">        hitList.addComponentColumn(new GridCallbackValueProvider(hitList));</span>
+
+<span class="nc" id="L301">        return hitList;</span>
+    }
+
+
+    private TextFieldWithIcon getFirst(boolean isUnternehmer) {
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (searchLeft == null) {</span>
+<span class="nc" id="L307">            TextField searchFieldLeft = new TextField();</span>
+<span class="nc" id="L308">            Label searchFieldLeftLabel = new Label();</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">            searchFieldLeftLabel.setIcon(isUnternehmer ? VaadinIcons.USER : VaadinIcons.ROCKET);</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">            TextFieldWithIcon searchLeft = new TextFieldWithIcon(&quot;0&quot;, searchFieldLeft, isUnternehmer ? &quot;Studenten finden&quot; : &quot;Job finden&quot;, searchFieldLeftLabel);</span>
+<span class="nc" id="L311">            this.searchLeft = searchLeft;</span>
+        }
+<span class="nc" id="L313">        return this.searchLeft;</span>
+    }
+
+
+    private TextFieldWithIcon getSecond() {
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if(searchRight == null) {</span>
+<span class="nc" id="L319">            TextField searchFieldRight = new TextField();</span>
+<span class="nc" id="L320">            Label searchFieldRightLabel = new Label();</span>
+<span class="nc" id="L321">            searchFieldRightLabel.setIcon(VaadinIcons.LOCATION_ARROW_CIRCLE);</span>
+<span class="nc" id="L322">            TextFieldWithIcon searchRight = new TextFieldWithIcon(&quot;0&quot;, searchFieldRight, &quot;Ort&quot;, searchFieldRightLabel);</span>
+<span class="nc" id="L323">            this.searchRight = searchRight;</span>
+        }
+<span class="nc" id="L325">        return this.searchRight;</span>
+    }
+
+    private ComboBox getThird() {
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if(searchLeftDown == null) {</span>
+<span class="nc" id="L330">            searchLeftDown = new ComboBox();</span>
+<span class="nc" id="L331">            searchLeftDown.setTextInputAllowed(false);</span>
+<span class="nc" id="L332">            searchLeftDown.setItems(BeschäftigungsArt.ALL, BeschäftigungsArt.VOLLZEIT, BeschäftigungsArt.WERK, BeschäftigungsArt.DUAL);</span>
+<span class="nc" id="L333">            searchLeftDown.setSelectedItem(BeschäftigungsArt.ALL);</span>
+<span class="nc" id="L334">            this.searchLeftDown = searchLeftDown;</span>
+        }
+<span class="nc" id="L336">        return this.searchLeftDown;</span>
+    }
+
+    private TextFieldWithIcon getFourth() {
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        if(searchRightDown == null) {</span>
+<span class="nc" id="L341">            TextField searchFieldRightDown = new TextField();</span>
+<span class="nc" id="L342">            Label searchFieldRightLabelDown = new Label();</span>
+<span class="nc" id="L343">            searchFieldRightLabelDown.setIcon(VaadinIcons.USER_CARD);</span>
+<span class="nc" id="L344">            TextFieldWithIcon searchRightDown = new TextFieldWithIcon(&quot;0&quot;, searchFieldRightDown, &quot;Qualifikationen&quot;, searchFieldRightLabelDown);</span>
+<span class="nc" id="L345">            this.searchRightDown = searchRightDown;</span>
+        }
+<span class="nc" id="L347">        return this.searchRightDown;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

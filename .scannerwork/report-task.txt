@@ -1,0 +1,6 @@
+projectKey=Mortys
+serverUrl=https://sepp-sonar.inf.h-brs.de
+serverVersion=7.9.1.27448
+dashboardUrl=https://sepp-sonar.inf.h-brs.de/dashboard?id=Mortys
+ceTaskId=AXMA1snSpBofuugbKPKs
+ceTaskUrl=https://sepp-sonar.inf.h-brs.de/api/ce/task?id=AXMA1snSpBofuugbKPKs

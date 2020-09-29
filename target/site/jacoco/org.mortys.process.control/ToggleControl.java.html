@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ToggleControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.process.control</a> &gt; <span class="el_source">ToggleControl.java</span></div><h1>ToggleControl.java</h1><pre class="source lang-java linenums">package org.mortys.process.control;
+
+import com.vaadin.data.HasValue;
+import org.mortys.gui.components.CheckBoxFeature;
+import org.mortys.model.dao.FeatureDAO;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+<span class="nc" id="L12">public class ToggleControl {</span>
+
+    public static boolean featureIsEnabled(String toggle) {
+<span class="nc" id="L15">        boolean status = false;</span>
+        try {
+<span class="nc" id="L17">            status = FeatureDAO.getInstance().fetchFeatureToggle(toggle).getValue();</span>
+<span class="nc" id="L18">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L19">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L20">        }</span>
+
+<span class="nc" id="L22">        return status;</span>
+    }
+
+    public static CheckBoxFeature fetchToggle(String toggle) {
+<span class="nc" id="L26">        CheckBoxFeature res = null;</span>
+        try {
+<span class="nc" id="L28">            res = FeatureDAO.getInstance().fetchFeatureToggle(toggle);</span>
+<span class="nc" id="L29">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L30">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L31">        }</span>
+<span class="nc" id="L32">        return res;</span>
+    }
+
+    public static void changeToggleStatus(String toggle, boolean value) {
+<span class="nc" id="L36">        FeatureDAO featureDAO = FeatureDAO.getInstance();</span>
+        try {
+<span class="nc" id="L38">            featureDAO.changeToggleStatus(toggle, value);</span>
+<span class="nc" id="L39">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L40">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+
+<span class="nc" id="L42">        }</span>
+<span class="nc" id="L43">    }</span>
+
+    public static void setValue(CheckBoxFeature checkBoxFeature) {
+<span class="nc" id="L46">        boolean res = fetchToggle(checkBoxFeature.getFeature()).getValue();</span>
+<span class="nc" id="L47">        checkBoxFeature.setValue(res);</span>
+<span class="nc" id="L48">    }</span>
+
+
+    /*
+    public static void changeToggleFeature(String toggle, String changeTo) {
+        try {
+            FeatureDAO.getInstance().changeToggleFeature(toggle, changeTo);
+        } catch (DatabaseException e) {
+            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+     */
+
+    public static void changeToggleCaption(String toggle, String changeTo) {
+        try {
+<span class="nc" id="L64">            FeatureDAO.getInstance().changeToggleCaption(toggle, changeTo);</span>
+<span class="nc" id="L65">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L66">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">    }</span>
+
+    public static void addToggle(CheckBoxFeature checkBoxFeature) {
+<span class="nc" id="L71">        String feature = checkBoxFeature.getFeature();</span>
+<span class="nc bnc" id="L72" title="All 6 branches missed.">        if (feature == null || feature.equals(&quot;&quot;) || feature.contains(&quot; &quot;))</span>
+<span class="nc" id="L73">            throw new IllegalArgumentException(&quot;feature darf nicht null oder leer sein! &quot;);</span>
+        try {
+<span class="nc" id="L75">            addToggleValueChangeListener(checkBoxFeature);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (fetchToggle(checkBoxFeature.getFeature()) == null) {</span>
+<span class="nc" id="L77">                FeatureDAO.getInstance().insertFeatureToggle(checkBoxFeature);</span>
+            }
+<span class="nc" id="L79">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L80">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L81">        }</span>
+<span class="nc" id="L82">    }</span>
+
+    public static void deleteToggle(CheckBoxFeature checkBoxFeature) {
+        try {
+<span class="nc" id="L86">            FeatureDAO.getInstance().deleteToggle(checkBoxFeature);</span>
+<span class="nc" id="L87">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L88">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L89">        }</span>
+<span class="nc" id="L90">    }</span>
+
+
+
+    public static void deleteAllToggle() {
+        try {
+<span class="nc" id="L96">            FeatureDAO.getInstance().deleteAllToggle();</span>
+<span class="nc" id="L97">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L98">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L99">        }</span>
+<span class="nc" id="L100">    }</span>
+
+    /*
+    public static boolean isRegistered(String toggle) {
+        boolean res = false;
+
+        try {
+            res = FeatureDAO.getInstance().fetchFeatureToggle(toggle) != null;
+        } catch (DatabaseException e) {
+            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return res;
+    }
+
+     */
+
+    public static void addToggleValueChangeListener(CheckBoxFeature checkBoxFeature) {
+<span class="nc" id="L118">        checkBoxFeature.addValueChangeListener(new HasValue.ValueChangeListener() {</span>
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent valueChangeEvent) {
+<span class="nc" id="L121">                ToggleControl.changeToggleStatus(checkBoxFeature.getFeature(),checkBoxFeature.getValue());</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                System.out.println(&quot;Feature \&quot;&quot; + checkBoxFeature.getFeature() + &quot;\&quot; &quot; + (featureIsEnabled(checkBoxFeature.getFeature()) ? &quot;enabled&quot; : &quot;disabled&quot;));</span>
+<span class="nc" id="L123">            }</span>
+        });
+<span class="nc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

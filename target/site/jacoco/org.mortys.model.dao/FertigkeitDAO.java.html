@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FertigkeitDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">FertigkeitDAO.java</span></div><h1>FertigkeitDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Fertigkeit;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L17">public class FertigkeitDAO extends AbstractDAO {</span>
+    private static FertigkeitDAO fertigkeitDAO;
+<span class="fc" id="L19">    private String table = DBTables.TAB_FERTIGKEIT;</span>
+
+    public static FertigkeitDAO getInstance() {
+
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (fertigkeitDAO == null) fertigkeitDAO = new FertigkeitDAO();</span>
+
+<span class="fc" id="L25">        return fertigkeitDAO;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;Fertigkeit&gt; fetchFertigkeitAll() throws DatabaseException {
+
+<span class="fc" id="L32">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc" id="L34">        List&lt;Fertigkeit&gt; fertigkeitList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L36">        String sqlBefehl = &quot;Select * FROM &quot; + table  + &quot;;&quot;;</span>
+<span class="fc" id="L37">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L38">        ResultSet resultSet = null;</span>
+
+        //String sqlBefehl = &quot;Select * FROM &quot; + table  + &quot;;&quot;;
+
+
+        try {
+<span class="fc" id="L44">            resultSet = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L47">                Fertigkeit fertigkeit = new Fertigkeit();</span>
+<span class="fc" id="L48">                fertigkeit.setSoftskill(resultSet.getString(&quot;softskill&quot;));</span>
+<span class="fc" id="L49">                fertigkeit.setBeschreibung(resultSet.getString(&quot;Beschreibung&quot;));</span>
+
+<span class="fc" id="L51">                fertigkeitList.add(fertigkeit);</span>
+
+<span class="fc" id="L53">                           }</span>
+
+<span class="nc" id="L55">        } catch (SQLException e) {</span>
+<span class="nc" id="L56">            Logger.getLogger(FertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L58" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L59">        }</span>
+
+
+<span class="fc" id="L62">        return fertigkeitList;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN  -START -----------------------------------------------------------------------------
+
+    public int persistFertigkeit(Fertigkeit fertigkeit) throws DatabaseException {
+
+<span class="fc" id="L71">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (fertigkeitAlreadyExists(fertigkeit)) {</span>
+<span class="fc" id="L74">            return getFertigkeitId(fertigkeit);</span>
+        }
+
+
+
+<span class="nc" id="L79">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(default,?,?)&quot;;</span>
+<span class="nc" id="L80">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L83">            statement.setString(1, fertigkeit.getSoftskill());</span>
+<span class="nc" id="L84">            statement.setString(2, fertigkeit.getBeschreibung());</span>
+
+<span class="nc" id="L86">            statement.executeUpdate();</span>
+<span class="nc" id="L87">            System.out.println(&quot;Fertigkeit neu angelegt!&quot;);</span>
+<span class="nc" id="L88">        } catch (SQLException e) {</span>
+<span class="nc" id="L89">            Logger.getLogger(FertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L91">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L92">        }</span>
+
+<span class="nc" id="L94">        return getFertigkeitId(fertigkeit);</span>
+    }
+
+    // PERSISTMETHODEN  -END
+
+    // HILFSMETHODEN -START --------------------------------------------------------------------------------------------
+
+    public int getFertigkeitId(Fertigkeit fertigkeit) {
+
+<span class="fc" id="L103">        String sqlBefehl =  &quot;SELECT nr  FROM &quot; + table + &quot; WHERE softskill = ? &quot; +</span>
+                &quot;AND beschreibung = ?;&quot;;
+<span class="fc" id="L105">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L106">        ResultSet resultSet = null;</span>
+<span class="fc" id="L107">        int fertigkeitID = 0;</span>
+        /*String sqlBefehl =  &quot;SELECT nr  FROM &quot; + table + &quot; WHERE softskill = '&quot; + fertigkeit.getSoftskill() + &quot;'&quot; +
+                            &quot;AND beschreibung = '&quot; + fertigkeit.getBeschreibung() + &quot;';&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L114">            statement.setString(1,fertigkeit.getSoftskill());</span>
+<span class="fc" id="L115">            statement.setString(2,fertigkeit.getBeschreibung());</span>
+<span class="fc" id="L116">            resultSet = statement.executeQuery();</span>
+
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            if (resultSet.next()) fertigkeitID = resultSet.getInt(&quot;nr&quot;);</span>
+
+<span class="nc" id="L120">        } catch (SQLException e) {</span>
+<span class="nc" id="L121">            Logger.getLogger(FertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L123" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L124">        }</span>
+
+<span class="fc" id="L126">        return fertigkeitID;</span>
+    }
+
+    // HILFSMETHODEN -END
+
+    // PRÜFMETHODEN -START ----------------------------------------------------------------------------------------------
+
+    private boolean fertigkeitAlreadyExists(Fertigkeit fertigkeit) {
+<span class="fc" id="L134">        String sqlBefehl =  &quot;SELECT nr  FROM &quot; + table + &quot; WHERE softskill = ? &quot; +</span>
+                &quot;AND beschreibung = ?;&quot;;
+<span class="fc" id="L136">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L137">        ResultSet resultSet = null;</span>
+<span class="fc" id="L138">        boolean exists = false;</span>
+        /*String sqlBefehl =  &quot;SELECT nr  FROM &quot; + table + &quot; WHERE softskill = '&quot; + fertigkeit.getSoftskill() + &quot;'&quot; +
+                &quot;AND beschreibung = '&quot; + fertigkeit.getBeschreibung() + &quot;';&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L145">            statement.setString(1,fertigkeit.getSoftskill());</span>
+<span class="fc" id="L146">            statement.setString(2,fertigkeit.getBeschreibung());</span>
+<span class="fc" id="L147">            resultSet = statement.executeQuery();</span>
+<span class="fc" id="L148">            exists = resultSet.next();</span>
+<span class="nc" id="L149">        } catch (SQLException e) {</span>
+<span class="nc" id="L150">            Logger.getLogger(FertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L152" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L153">        }</span>
+
+<span class="fc" id="L155">        return exists;</span>
+    }
+
+    // PRÜFMETHODEN -END
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

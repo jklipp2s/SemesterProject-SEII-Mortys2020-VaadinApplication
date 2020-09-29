@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DBViews.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.services.util</a> &gt; <span class="el_source">DBViews.java</span></div><h1>DBViews.java</h1><pre class="source lang-java linenums">package org.mortys.services.util;
+
+<span class="nc" id="L3">public class DBViews {</span>
+    public static final String ALL_STUDENTS = &quot;dbs_view_all_students&quot;;
+    public static final String ALL_UNTERNEHMER = &quot;dbs_view_all_unternehmer&quot;;
+    public static final String USER_HAT_ADDRESSE = &quot;dbs_view_user_hat_addresse&quot;;
+    public static final String STUDENT_HAT_FERTIGKEIT = &quot;dbs_view_user_has_fertigkeit&quot;;
+    public static final String STELLENANZEIGE_FORDERT_FERTIGKEIT = &quot;dbs_view_stellenanzeige_fordert_fertigkeit&quot;;
+    public static final String UNTERNEHMER_ERSTELLT_STELLENANZEIGE = &quot;dbs_view_unternehmer_erstellt_stellenanzeige&quot;;
+    public static final String STUDENT_BEWIRBT_STELLENANZEIGE = &quot;dbs_view_student_bewirbt_stellenanzeige&quot;;
+    public static final String FERTIGKEITEN_ZUGEORDNET = &quot;dbs_view_fertigkeiten&quot;;
+
+
+<span class="nc" id="L14">    public class Creation {</span>
+
+        public static final String CREATE_VIEW_ALL_STUDENTS = &quot;CREATE VIEW &quot; + DBViews.ALL_STUDENTS + &quot; AS\n&quot; +
+                &quot;SELECT s.matrikelnr, s.type, a.plz  ||' '||  a.ort As ort, u.anrede, u.geburtsdatum, s.email, u.username, u.nachname, \n&quot; +
+                &quot;u.vorname, u.telefon, u.regdate, u.password, u.status, \n&quot; +
+                &quot;u.adresse, u.avatar FROM &quot; + DBTables.TAB_STUDENT + &quot; s, &quot; + DBTables.TAB_USER+ &quot; u ,\n&quot; +
+                DBTables.TAB_ADRESSE +&quot; a \n&quot; +
+                &quot;where s.email = u.email and u.adresse = a.addr_nr; &quot;;
+
+        public static final String CREATE_VIEW_ALL_UNTERNEHMER = &quot;CREATE VIEW &quot; + DBViews.ALL_UNTERNEHMER + &quot; AS\n&quot; +
+                &quot;SELECT un.kunden_nr, un.firmenname, un.ustid, un.iban , u.anrede, u.geburtsdatum, u.email, u.username, u.nachname, \n&quot; +
+                &quot;u.vorname, u.telefon, u.regdate, u.password, u.status, u.avatar, \n&quot; +
+                &quot;u.adresse FROM &quot; + DBTables.TAB_UNTERNEHMER + &quot; un, &quot; + DBTables.TAB_USER+ &quot; u \n&quot; +
+                &quot;where un.email = u.email; &quot;;
+
+
+
+        public static final String CREATE_VIEW_USER_HAS_ADDRESS = &quot;create view &quot; + USER_HAT_ADDRESSE + &quot; as \n&quot; +
+                &quot;select  email, username, addr_nr, plz, ort, street, h_nr \n&quot; +
+                &quot;from &quot; + DBTables.TAB_ADRESSE + &quot; a,\n&quot; +
+                DBTables.TAB_USER + &quot; u\n&quot; +
+                &quot;where a.addr_nr = u.adresse;&quot;;
+
+        private static final String zwischenView = &quot;(Select * from &quot; + DBTables.TAB_STUDENT + &quot; s, \n&quot; +
+                DBTables.TAB_ST_HAT_F + &quot; shf , \n&quot; +
+                DBTables.TAB_FERTIGKEIT + &quot; f\n&quot; +
+                &quot;where s.matrikelnr = shf.student\n&quot; +
+                &quot;and f.nr = shf.fertigkeit) &quot;;
+
+        public static final String CREATE_VIEW_STUDENT_HAT_FERTIGKEIT = &quot;create view &quot; + STUDENT_HAT_FERTIGKEIT + &quot; as\n&quot; +
+                &quot;select s.matrikelnr, s.email, shf.fertigkeiten, shf.beschreibungen \n&quot; +
+                &quot;from &quot; + DBTables.TAB_STUDENT + &quot; s,\n&quot;  +
+                &quot;(Select s.matrikelnr AS student, string_agg(softskill, ', ') As fertigkeiten  ,  string_agg(beschreibung, ' ||| ')\n&quot; +
+                &quot;As beschreibungen\n&quot; +
+                &quot;From &quot; + ALL_STUDENTS + &quot; s ,( SELECT  Username, softskill, beschreibung \n&quot; +
+                &quot;FROM &quot; + ALL_STUDENTS + &quot; s, &quot; + zwischenView + &quot; f where  \n&quot; +
+                &quot;f.matrikelnr = s.matrikelnr) l where l.username = s.username \n&quot; +
+                &quot;Group by s.matrikelnr) shf\n&quot; +
+                &quot;where s.matrikelnr = shf.student;&quot;;
+
+
+        public static final String CREATE_VIEW_STELLENANZEIGE_FORDERT_FERTIGKEIT = &quot;create view &quot; + STELLENANZEIGE_FORDERT_FERTIGKEIT + &quot; as\n&quot; +
+                &quot;select s.id AS stellenanzeige, s.titel, s.beschreibung AS st_beschreibung,\n&quot; +
+                &quot; f.nr AS fertigkeit,  f.softskill, f.beschreibung AS f_beschreibung \n&quot; +
+                &quot;from &quot; + DBTables.TAB_STELLENANZEIGE + &quot; s, \n&quot; +
+                DBTables.TAB_FERTIGKEIT + &quot; f, \n&quot; +
+                DBTables.TAB_ST_FORDERT_F + &quot; sff\n&quot; +
+                &quot;where sff.fertigkeit = f.nr \n&quot; +
+                &quot;and sff.stellenanzeige = s.id;&quot;;
+
+        public static final String CREATE_VIEW_UNTERNEHMER_ERSTELLT_STELLENANZEIGE = &quot;create view &quot; + UNTERNEHMER_ERSTELLT_STELLENANZEIGE + &quot; as     \n&quot; +
+                &quot;select ues.erstelldatum, s.status, s.id,\n&quot; +
+                &quot;s.titel,s.beschreibung, ues.unternehmer,\n&quot; +
+                &quot;addr.plz || ' ' || addr.ort AS ort, u.firmenname, u.email  \n&quot; +
+                &quot;from &quot; + DBTables.TAB_U_ERSTELLT_ST + &quot; ues,\n&quot; +
+                 DBTables.TAB_UNTERNEHMER + &quot; u, &quot; + DBTables.TAB_STELLENANZEIGE + &quot; s,\n&quot; +
+                 DBViews.USER_HAT_ADDRESSE + &quot; addr\n&quot; +
+                &quot;where ues.stellenanzeige = s.id\n&quot; +
+                &quot;and ues.unternehmer = u.kunden_nr\n&quot; +
+                &quot;and u.email = addr.email;&quot;;
+
+
+
+        public static final String CREATE_VIEW_STUDENT_BEWIRBT_STELLENANZEIGE = &quot;create view &quot; + STUDENT_BEWIRBT_STELLENANZEIGE + &quot; as \n&quot; +
+                &quot;select sbf.student, s.email, sbf.status As status_student, \n&quot; +
+                &quot;u.firmenname, st.id, u.erstelldatum, st.titel, st.beschreibung, \n&quot; +
+                &quot;st.status As status_stellenanzeige \n&quot; +
+                &quot;from &quot; + DBTables.TAB_STUDENT_BEWIRBT_ST + &quot; sbf,\n&quot; +
+                 DBTables.TAB_STUDENT + &quot; s, \n&quot; +
+                 DBTables.TAB_STELLENANZEIGE + &quot; st,\n&quot; +
+                 UNTERNEHMER_ERSTELLT_STELLENANZEIGE + &quot; u\n&quot; +
+                &quot;where sbf.student = s.matrikelnr\n&quot; +
+                &quot;and sbf.stellenanzeige = st.id\n&quot; +
+                &quot;and u.id = sbf.stellenanzeige;&quot;;
+
+    }
+
+
+
+    public static final String CREATE_VIEW_FERTIGKEITEN_ZUGEORDNET = &quot;create view as\n&quot; +
+            &quot;Select s.matrikelnr AS username, string_agg(softskill, ', ')\n&quot; +
+            &quot;As fertigkeiten   FROM dbs_view_all_students s ,( SELECT  Username, softskill \n&quot; +
+            &quot;FROM dbs_view_all_students s, dbs_view_user_has_fertigkeit f where  \n&quot; +
+            &quot;f.matrikelnr = s.matrikelnr) l where l.username = s.username \n&quot; +
+            &quot;Group by s.matrikelnr;&quot;;
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

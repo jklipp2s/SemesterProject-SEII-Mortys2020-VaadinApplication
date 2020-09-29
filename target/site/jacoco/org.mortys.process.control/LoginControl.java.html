@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.process.control</a> &gt; <span class="el_source">LoginControl.java</span></div><h1>LoginControl.java</h1><pre class="source lang-java linenums">package org.mortys.process.control;
+
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.UI;
+import org.mortys.model.dao.StudentDAO;
+import org.mortys.model.dao.UnternehmerDAO;
+import org.mortys.model.dao.UserDAO;
+import org.mortys.model.dao.UserHatResetCodeDAO;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.exception.NoSuchUserOrPassword;
+import org.mortys.process.control.exception.UserNotFoundException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.mail.MailSenderConnection;
+import org.mortys.services.util.MailMsgTemplates;
+import org.mortys.services.util.Roles;
+import org.mortys.services.util.Views;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+<span class="nc" id="L27">public class LoginControl {</span>
+
+    public static void checkAuthentication(String email, String password) throws NoSuchUserOrPassword, DatabaseException {
+
+<span class="fc" id="L31">        User user = null;</span>
+<span class="fc" id="L32">        boolean correct = false;</span>
+        try {
+<span class="fc" id="L34">            correct = UserDAO.getInstance().isPasswordCorrect(email, password);</span>
+        }
+<span class="nc" id="L36">        catch (DatabaseException ex) {</span>
+<span class="nc" id="L37">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="fc" id="L38">        }</span>
+            try {
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                if (correct) {</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                    if (UserDAO.getInstance().isStudent(email)) {</span>
+<span class="fc" id="L42">                        user = (Student) StudentDAO.getInstance().fetchUser(email);</span>
+                    } else {
+<span class="nc" id="L44">                        user = (Unternehmer) UnternehmerDAO.getInstance().fetchUser(email);</span>
+                    }
+                } else {
+<span class="fc" id="L47">                    throw new NoSuchUserOrPassword(&quot;Wrong Email or Password. Please try again.&quot;);</span>
+                }
+<span class="nc" id="L49">            } catch (DatabaseException ex) {</span>
+<span class="nc" id="L50">                Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="fc" id="L51">            }</span>
+
+<span class="fc" id="L53">            VaadinSession session = UI.getCurrent().getSession();</span>
+<span class="fc" id="L54">            session.setAttribute(Roles.CURRENT_USER, user);</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            session.setAttribute(user instanceof Student ? Roles.STUDENT : Roles.UNTERNEHMER, user);</span>
+
+<span class="nc" id="L57">            UI.getCurrent().getNavigator().navigateTo(Views.PROFILE);</span>
+<span class="nc" id="L58">    }</span>
+
+    public static void logoutUser() {
+<span class="nc" id="L61">        UI.getCurrent().getSession().close();</span>
+<span class="nc" id="L62">        UI.getCurrent().getPage().setLocation(Views.MAIN);</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Methode, zum reseten des Passwortes
+     * @param email
+     * @return
+     * @throws UserNotFoundException
+     */
+    public static boolean sendResetCode(String email) throws UserNotFoundException {
+
+<span class="nc" id="L73">        MailSenderConnection mailConnection = MailSenderConnection.getInstance();</span>
+<span class="nc" id="L74">        UserHatResetCodeDAO resetCodeDAO = UserHatResetCodeDAO.getInstance();</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (resetCodeDAO.resetCodeIsAlreadyExistsByUser(email))</span>
+<span class="nc" id="L77">            resetCodeDAO.deleteExistendResetCodeByUser(email);</span>
+
+        try {
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (!UserDAO.getInstance().emailIsAlreadyInUse(email))</span>
+<span class="nc" id="L81">                throw new UserNotFoundException(&quot;User nicht registriert!&quot;);</span>
+<span class="nc" id="L82">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L83">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L84">        }</span>
+
+        try {
+<span class="nc" id="L87">            String randomCode = resetCodeDAO.insertResetCodeByUser(email,generateResetCode());</span>
+<span class="nc" id="L88">            mailConnection.send(</span>
+                    email,
+                    MailMsgTemplates.resetPWSubject,
+                    MailMsgTemplates.resetPWMsg +
+<span class="nc" id="L92">                            randomCode.substring(0,3) + &quot; &quot;  + randomCode.substring(3,6));</span>
+<span class="nc" id="L93">        } catch (UnsupportedEncodingException | MessagingException | DatabaseException  e) {</span>
+<span class="nc" id="L94">            e.printStackTrace();</span>
+<span class="nc" id="L95">            return false;</span>
+<span class="nc" id="L96">        }</span>
+<span class="nc" id="L97">        return true;</span>
+    }
+
+    public static boolean checkValidResetCode(String email, String code) {
+<span class="nc" id="L101">        UserHatResetCodeDAO resetCodeDAO = UserHatResetCodeDAO.getInstance();</span>
+
+<span class="nc bnc" id="L103" title="All 6 branches missed.">        if (code.length() == 6 &amp;&amp; code != null || !resetCodeDAO.resetCodeIsAlreadyExistsByUser(email)) {</span>
+<span class="nc" id="L104">            String resetcodeFromDB = null;</span>
+
+            try {
+<span class="nc" id="L107">                resetCodeDAO.deleteTooOldResetCodes();</span>
+<span class="nc" id="L108">                resetcodeFromDB = resetCodeDAO.getResetCodeByUser(email);</span>
+<span class="nc" id="L109">            } catch (DatabaseException e) {</span>
+<span class="nc" id="L110">                Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L111">                return false;</span>
+<span class="nc" id="L112">            }</span>
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (resetcodeFromDB != null) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if (code.equals(resetcodeFromDB)) {</span>
+<span class="nc" id="L116">                    resetCodeDAO.deleteExistendResetCodeByUser(email);</span>
+<span class="nc" id="L117">                    return true;</span>
+                }
+            }
+        }
+<span class="nc" id="L121">        return false;</span>
+    }
+
+    public static void changePassword(String email, String password1, String password2) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (!password1.equals(password2))</span>
+<span class="nc" id="L126">            throw new IllegalArgumentException(&quot;Passwort nicht identisch&quot;);</span>
+<span class="nc" id="L127">        changePasswort(email,password1);</span>
+<span class="nc" id="L128">    }</span>
+
+    private static boolean changePasswort(String email, String password) {
+        try {
+<span class="nc" id="L132">            UserHatResetCodeDAO.getInstance().resetPasswort(email, password);</span>
+<span class="nc" id="L133">        } catch (DatabaseException e) {</span>
+<span class="nc" id="L134">            Logger.getLogger(JDBCConnection.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L135">            return false;</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">        return true;</span>
+    }
+
+    public static String generateResetCode() {
+<span class="nc" id="L141">        SecureRandom r = new SecureRandom();</span>
+<span class="nc" id="L142">        String random = &quot;&quot; + Math.round(r.nextDouble() * 1000000) % 1000000;</span>
+<span class="nc" id="L143">        int length = random.length();</span>
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (length &gt; 6)</span>
+<span class="nc" id="L146">            throw new IllegalStateException(&quot;Code über 6 Zeichen lang!&quot;);</span>
+
+<span class="nc" id="L148">        String nullValue = &quot;&quot;;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        for (int i = 0; i &lt; 6-length; i++) {</span>
+<span class="nc" id="L150">            nullValue += 0;</span>
+        }
+<span class="nc" id="L152">        return nullValue + random;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

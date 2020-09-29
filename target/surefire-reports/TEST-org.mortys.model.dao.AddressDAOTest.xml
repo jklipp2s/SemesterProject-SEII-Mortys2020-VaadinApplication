@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mortys.model.dao.AddressDAOTest" time="0.048" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="JOB_NAME" value="Mortys"/>
+    <property name="PWD" value="/home/jenkinsbld1"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="JENKINS_HOME" value="/var/lib/jenkins"/>
+    <property name="PATH" value="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"/>
+    <property name="HUDSON_SERVER_COOKIE" value="0ece9cc4fdff719f"/>
+    <property name="POM_ARTIFACTID" value="Mortys"/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes"/>
+    <property name="ANT_OPTS" value="-Dhttp.proxyHost=www-cache.inf.h-brs.de -Dhttp.proxyPort=8080"/>
+    <property name="EXECUTOR_NUMBER" value="0"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="POM_DISPLAYNAME" value="Mortys"/>
+    <property name="XDG_RUNTIME_DIR" value="/run/user/1000"/>
+    <property name="NODE_LABELS" value="node1"/>
+    <property name="java.runtime.version" value="1.8.0_201-b09"/>
+    <property name="ROOT_BUILD_CAUSE" value="MANUALTRIGGER"/>
+    <property name="user.name" value="jenkinsbld1"/>
+    <property name="SSH_CONNECTION" value="127.0.0.1 49668 127.0.0.1 22"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="SSH_CLIENT" value="127.0.0.1 49668 22"/>
+    <property name="user.language" value="en"/>
+    <property name="JOB_BASE_NAME" value="Mortys"/>
+    <property name="RUN_CHANGES_DISPLAY_URL" value="https://sepp-jenkins.inf.h-brs.de/job/Mortys/215/display/redirect?page=changes"/>
+    <property name="BUILD_DISPLAY_NAME" value="#215"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64"/>
+    <property name="GIT_PREVIOUS_SUCCESSFUL_COMMIT" value="255d23043f2010e75af28010f77e3e260d07d0a3"/>
+    <property name="java.version" value="1.8.0_201"/>
+    <property name="user.timezone" value="Europe/Berlin"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="NODE_NAME" value="node1"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed"/>
+    <property name="BUILD_ID" value="215"/>
+    <property name="sun.cpu.isalist" value=""/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="SHELL" value="/bin/sh"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="info"/>
+    <property name="user.country" value="US"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="os.version" value="4.4.0-177-generic"/>
+    <property name="FTP_PROXY" value="http://www-cache.inf.h-brs.de:8080"/>
+    <property name="RUN_DISPLAY_URL" value="https://sepp-jenkins.inf.h-brs.de/job/Mortys/215/display/redirect"/>
+    <property name="POM_VERSION" value="1.0-SNAPSHOT"/>
+    <property name="sun.font.fontmanager" value="sun.awt.X11FontManager"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.version" value="25.201-b09"/>
+    <property name="GIT_PREVIOUS_COMMIT" value="255d23043f2010e75af28010f77e3e260d07d0a3"/>
+    <property name="JOB_DISPLAY_URL" value="https://sepp-jenkins.inf.h-brs.de/job/Mortys/display/redirect"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="JAVA_HOME" value="/usr/lib/jvm/java-8-oracle"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="LOGNAME" value="jenkinsbld1"/>
+    <property name="POM_PACKAGING" value="war"/>
+    <property name="HOME" value="/home/jenkinsbld1"/>
+    <property name="POM_GROUPID" value="org.example"/>
+    <property name="user.home" value="/home/jenkinsbld1"/>
+    <property name="BUILD_TAG" value="jenkins-Mortys-215"/>
+    <property name="JENKINS_SERVER_COOKIE" value="0ece9cc4fdff719f"/>
+    <property name="HUDSON_URL" value="https://sepp-jenkins.inf.h-brs.de/"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="XDG_SESSION_ID" value="7440"/>
+    <property name="CLASSPATH" value=""/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="ROOT_BUILD_CAUSE_MANUALTRIGGER" value="true"/>
+    <property name="https_proxy" value="http://www-cache.inf.h-brs.de:8080"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="http_proxy" value="http://www-cache.inf.h-brs.de:8080"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="java.class.path" value="/home/jenkinsbld1/maven33-agent.jar:/usr/share/maven/boot/plexus-classworlds-2.x.jar:/usr/share/maven/conf/logging"/>
+    <property name="sun.java.command" value="jenkins.maven3.agent.Maven33Main /usr/share/maven /home/jenkinsbld1/remoting.jar /home/jenkinsbld1/maven33-interceptor.jar /home/jenkinsbld1/maven3-interceptor-commons.jar 43866"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PATH+JDK" value="/usr/lib/jvm/java-8-oracle/bin"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="M2_HOME" value="/usr/share/maven"/>
+    <property name="MAIL" value="/var/mail/jenkinsbld1"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="HUDSON_HOME" value="/var/lib/jenkins"/>
+    <property name="PATH+MAVEN" value="/usr/share/maven/bin"/>
+    <property name="BUILD_URL" value="https://sepp-jenkins.inf.h-brs.de/job/Mortys/215/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="OLDPWD" value="/home/jenkinsbld1"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="user.dir" value="/home/jenkinsbld1/workspace/Mortys"/>
+    <property name="JOB_URL" value="https://sepp-jenkins.inf.h-brs.de/job/Mortys/"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="MAVEN_HOME" value="/usr/share/maven"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="BUILD_NUMBER" value="215"/>
+    <property name="JENKINS_URL" value="https://sepp-jenkins.inf.h-brs.de/"/>
+    <property name="GIT_BRANCH" value="origin/master"/>
+    <property name="BUILD_CAUSE_MANUALTRIGGER" value="true"/>
+    <property name="GIT_COMMIT" value="255d23043f2010e75af28010f77e3e260d07d0a3"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="LANG" value="en_US.UTF-8"/>
+    <property name="maven3.interceptor" value="/home/jenkinsbld1/maven33-interceptor.jar"/>
+    <property name="WORKSPACE_TMP" value="/home/jenkinsbld1/workspace/Mortys@tmp"/>
+    <property name="WORKSPACE" value="/home/jenkinsbld1/workspace/Mortys"/>
+    <property name="maven3.interceptor.common" value="/home/jenkinsbld1/maven3-interceptor-commons.jar"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="BUILD_CAUSE" value="MANUALTRIGGER"/>
+    <property name="LANGUAGE" value="en_US:en"/>
+    <property name="USER" value="jenkinsbld1"/>
+    <property name="GIT_URL" value="git@vm-2d21.inf.h-brs.de:wi-inf_se2_2020_Mortys/wi-inf_se2_2020_Mortys.git"/>
+  </properties>
+  <testcase name="getInstance" classname="org.mortys.model.dao.AddressDAOTest" time="0"/>
+  <testcase name="fetchAllAddress" classname="org.mortys.model.dao.AddressDAOTest" time="0.038"/>
+  <testcase name="fetchAddressTest" classname="org.mortys.model.dao.AddressDAOTest" time="0.007"/>
+  <testcase name="persistAddress" classname="org.mortys.model.dao.AddressDAOTest" time="0.003"/>
+</testsuite>

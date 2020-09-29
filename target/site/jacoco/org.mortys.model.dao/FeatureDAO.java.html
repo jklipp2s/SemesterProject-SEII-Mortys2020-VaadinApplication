@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FeatureDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">FeatureDAO.java</span></div><h1>FeatureDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.gui.components.CheckBoxFeature;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class FeatureDAO extends AbstractDAO {
+
+    private static FeatureDAO featureDAO;
+<span class="nc" id="L19">    private String table = DBTables.TAB_TOGGLE_CONFIGURATION;</span>
+
+<span class="nc" id="L21">    private FeatureDAO() {</span>
+
+<span class="nc" id="L23">    }</span>
+
+    public static synchronized FeatureDAO getInstance() {
+
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (featureDAO == null)</span>
+<span class="nc" id="L28">            featureDAO = new FeatureDAO();</span>
+
+<span class="nc" id="L30">        return featureDAO;</span>
+    }
+
+    public void insertFeatureToggle(CheckBoxFeature feature) throws DatabaseException {
+<span class="nc bnc" id="L34" title="All 6 branches missed.">        if (feature.getFeature() == null || feature.getFeature().length() == 0 || feature.getFeature().contains(&quot; &quot;))</span>
+<span class="nc" id="L35">            throw new IllegalArgumentException(&quot;Feature nicht beschriftet!&quot;);</span>
+
+<span class="nc" id="L37">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L38">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?,?)&quot;;</span>
+<span class="nc" id="L39">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+
+        try {
+            final String featureStr, captionStr;
+<span class="nc" id="L44">            featureStr = feature.getFeature();</span>
+<span class="nc" id="L45">            captionStr = feature.getCaption();</span>
+
+<span class="nc" id="L47">            statement.setString(1, featureStr);</span>
+<span class="nc" id="L48">            statement.setBoolean(2, feature.getValue());</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            statement.setString(3, captionStr == null ? &quot;&quot; : captionStr);</span>
+
+<span class="nc" id="L51">            statement.executeUpdate();</span>
+<span class="nc" id="L52">        } catch (SQLException e) {</span>
+<span class="nc" id="L53">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L55">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">    }</span>
+
+    public CheckBoxFeature fetchFeatureToggle(String feature) throws DatabaseException {
+<span class="nc" id="L60">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L61">        ResultSet toggleData = null;</span>
+<span class="nc" id="L62">        String sqlBefehl = &quot;SELECT * FROM &quot; + table + &quot; WHERE feature = ?;&quot;;</span>
+
+<span class="nc" id="L64">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+<span class="nc" id="L66">        CheckBoxFeature checkBoxFeature = new CheckBoxFeature();</span>
+
+        try {
+<span class="nc" id="L69">            statement.setString(1,feature);</span>
+
+<span class="nc" id="L71">            toggleData = statement.executeQuery();</span>
+
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (toggleData == null)</span>
+<span class="nc" id="L74">                return null;</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (toggleData.next()) {</span>
+<span class="nc" id="L77">                String caption = toggleData.getString(3);</span>
+<span class="nc" id="L78">                checkBoxFeature.setFeature(toggleData.getString(1));</span>
+<span class="nc" id="L79">                checkBoxFeature.setValue(toggleData.getBoolean(2));</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                checkBoxFeature.setCaption((caption.equals(&quot;&quot;) ? null : caption));</span>
+<span class="nc" id="L81">            } else {</span>
+<span class="nc" id="L82">                return null;</span>
+            }
+<span class="nc" id="L84">        } catch (SQLException e) {</span>
+<span class="nc" id="L85">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L87">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc bnc" id="L88" title="All 10 branches missed.">            try { if (toggleData != null) toggleData.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L89">        }</span>
+
+<span class="nc" id="L91">        return checkBoxFeature;</span>
+    }
+
+    public List&lt;CheckBoxFeature&gt; fetchAllToggles() throws DatabaseException {
+<span class="nc" id="L95">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L96">        String sqlBefehl = &quot;SELECT * FROM &quot; + table + &quot;;&quot;;</span>
+<span class="nc" id="L97">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        //String sqlBefehl = &quot;SELECT * FROM &quot; + table + &quot;;&quot;;
+
+<span class="nc" id="L100">        List&lt;CheckBoxFeature&gt; checkBoxFeatureList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L101">        ResultSet resultSet = null;</span>
+
+        try {
+<span class="nc" id="L104">            resultSet = statement.executeQuery();</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            while (resultSet.next()) {</span>
+<span class="nc" id="L107">                CheckBoxFeature tmp = new CheckBoxFeature();</span>
+
+<span class="nc" id="L109">                tmp.setFeature(resultSet.getString(1));</span>
+<span class="nc" id="L110">                tmp.setValue(resultSet.getBoolean(2));</span>
+<span class="nc" id="L111">                tmp.setCaption(resultSet.getString(3));</span>
+
+<span class="nc" id="L113">                checkBoxFeatureList.add(tmp);</span>
+
+<span class="nc" id="L115">            }</span>
+<span class="nc" id="L116">        } catch (SQLException e) {</span>
+<span class="nc" id="L117">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L119">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc bnc" id="L120" title="All 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L121">        }</span>
+
+<span class="nc" id="L123">        return checkBoxFeatureList;</span>
+
+    }
+
+    public void deleteToggle(CheckBoxFeature checkBoxFeature) throws DatabaseException {
+<span class="nc" id="L128">        String featureString = checkBoxFeature.getFeature();</span>
+<span class="nc" id="L129">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L130">        String sqlBefehl = &quot;DELETE FROM &quot; + table + &quot; WHERE feature = ?;&quot;;</span>
+<span class="nc" id="L131">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L134">            statement.setString(1,checkBoxFeature.getFeature());</span>
+<span class="nc" id="L135">            statement.executeUpdate();</span>
+<span class="nc" id="L136">        } catch (SQLException e) {</span>
+<span class="nc" id="L137">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L139">            JDBCConnection.getInstance().closeConnection();</span>
+
+<span class="nc" id="L141">        }</span>
+<span class="nc" id="L142">    }</span>
+
+    public void deleteAllToggle() throws DatabaseException {
+<span class="nc" id="L145">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L146">        String sqlBefehl = &quot;DELETE FROM &quot; + table + &quot;;&quot;;</span>
+<span class="nc" id="L147">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L150">            statement.executeUpdate();</span>
+<span class="nc" id="L151">        } catch (SQLException e) {</span>
+<span class="nc" id="L152">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L154">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">    }</span>
+
+
+    public void changeToggleStatus(String feature, boolean changeTo) throws DatabaseException {
+<span class="nc" id="L160">        JDBCConnection.getInstance().openConnection();</span>
+        //String sql = &quot;UPDATE &quot; + table + &quot; SET status = &quot; + changeTo + &quot; WHERE feature = '&quot; + feature + &quot;';&quot;;
+<span class="nc" id="L162">        String sql = &quot;UPDATE &quot; + table + &quot; SET status = ? WHERE feature = ?;&quot;;</span>
+<span class="nc" id="L163">        PreparedStatement statement = getPreparedStatement(sql);</span>
+        try {
+<span class="nc" id="L165">            statement.setBoolean(1,changeTo);</span>
+<span class="nc" id="L166">            statement.setString(2,feature);</span>
+<span class="nc" id="L167">            statement.executeUpdate();</span>
+<span class="nc" id="L168">        } catch (SQLException e) {</span>
+<span class="nc" id="L169">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L171">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L172">        }</span>
+
+<span class="nc" id="L174">    }</span>
+
+
+
+    /*
+    public void changeToggleFeature(String feature, String changeTo) throws DatabaseException {
+        JDBCConnection.getInstance().openConnection();
+        String sql = &quot;UPDATE &quot; + table + &quot; SET feature = '&quot; + changeTo + &quot;' WHERE feature = '&quot; + feature + &quot;';&quot;;
+        try {
+            detectSQLInjection(feature);
+            detectSQLInjection(changeTo);
+            getStatement().executeUpdate(sql);
+        } catch (SQLException e) {
+            Logger.geFeatureDAO(UserDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            JDBCConnection.getInstance().closeConnection();
+        }
+
+    }
+
+     */
+
+    public void changeToggleCaption(String feature, String changeTo) throws DatabaseException {
+<span class="nc" id="L197">        JDBCConnection.getInstance().openConnection();</span>
+        //String sql = &quot;UPDATE &quot; + table + &quot; SET caption = '&quot; + changeTo + &quot;' WHERE feature = '&quot; + feature + &quot;'&quot;;
+<span class="nc" id="L199">        String sql = &quot;UPDATE &quot; + table + &quot; SET caption = ? WHERE feature = ?&quot;;</span>
+<span class="nc" id="L200">        PreparedStatement statement = getPreparedStatement(sql);</span>
+
+        try {
+<span class="nc" id="L203">            statement.setString(1,changeTo);</span>
+<span class="nc" id="L204">            statement.setString(2,feature);</span>
+<span class="nc" id="L205">            statement.executeUpdate();</span>
+<span class="nc" id="L206">        } catch (SQLException e) {</span>
+<span class="nc" id="L207">            Logger.getLogger(FeatureDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L209">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L210">        }</span>
+<span class="nc" id="L211">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

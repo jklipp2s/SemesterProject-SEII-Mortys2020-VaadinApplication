@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileFields.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.components</a> &gt; <span class="el_source">ProfileFields.java</span></div><h1>ProfileFields.java</h1><pre class="source lang-java linenums">package org.mortys.gui.components;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.*;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.model.objects.dto.Unternehmer;
+import org.mortys.model.objects.dto.User;
+
+import java.time.LocalDate;
+
+public class ProfileFields extends HorizontalLayout {
+    NativeSelect&lt;String&gt; anredeSelect;
+<span class="nc" id="L14">    TextField vornameFieldbasic, nachnameFieldbasic,matrikelnummerFieldBasic=null,firmaFieldBasic=null,strasseFieldBasic,hausnummerFieldBasic,plzFieldBasic,ortFieldBasic,telefonnummerFieldBasic,ustIdFieldBasic=null,ibanFieldBasic=null;</span>
+    DateField dateField;
+<span class="nc" id="L16">    Label vornameFieldLabel,nachnameFieldLabel,addresseLabel,matrikelnummerFieldLabel=null,firmaFieldLabel=null,strasseFieldlLabel,hausnummerFieldLabel,plzFieldLabel,ortFieldLabel,telefonnummerFieldLabel,ustIdFieldlabel,ibanFieldLabel;</span>
+<span class="nc" id="L17">    TextFieldWithIcon vornameField,nachnameField,matrikelnummerField=null,firmaField=null,strasseField,hausnummerField,plzField,ortField,telefonnummerField,ustIdField=null,ibanField=null;</span>
+
+<span class="nc" id="L19">    public ProfileFields(Unternehmer user){</span>
+<span class="nc" id="L20">        this.setStyleName(&quot;profile_fieldContainer&quot;);</span>
+<span class="nc" id="L21">        firmaFieldLabel = new Label();</span>
+<span class="nc" id="L22">        firmaFieldBasic = new TextField();</span>
+<span class="nc" id="L23">        firmaFieldLabel.setIcon(VaadinIcons.FACTORY);</span>
+<span class="nc" id="L24">        firmaField = new TextFieldWithIcon(firmaFieldBasic, user.getFirmenname(),firmaFieldLabel);</span>
+
+<span class="nc" id="L26">        ustIdFieldlabel = new Label();</span>
+<span class="nc" id="L27">        ustIdFieldBasic = new TextField();</span>
+<span class="nc" id="L28">        ustIdFieldlabel.setIcon(VaadinIcons.USER_CARD);</span>
+<span class="nc" id="L29">        ustIdField = new TextFieldWithIcon(ustIdFieldBasic,user.getUstId(),ustIdFieldlabel);</span>
+
+<span class="nc" id="L31">        ibanFieldLabel = new Label();</span>
+<span class="nc" id="L32">        ibanFieldBasic = new TextField();</span>
+<span class="nc" id="L33">        ibanFieldLabel.setIcon(VaadinIcons.CREDIT_CARD);</span>
+<span class="nc" id="L34">        ibanField = new TextFieldWithIcon(ibanFieldBasic, user.getIban(),ibanFieldLabel);</span>
+
+<span class="nc" id="L36">        HorizontalLayout body = this.setUp(user);</span>
+<span class="nc" id="L37">        this.addComponent(body);</span>
+<span class="nc" id="L38">    }</span>
+
+<span class="nc" id="L40">    public ProfileFields(Student user) {</span>
+<span class="nc" id="L41">        this.setStyleName(&quot;profile_fieldContainer&quot;);</span>
+<span class="nc" id="L42">        matrikelnummerFieldLabel = new Label();</span>
+<span class="nc" id="L43">        matrikelnummerFieldBasic = new TextField();</span>
+<span class="nc" id="L44">        matrikelnummerFieldLabel.setIcon(VaadinIcons.DIPLOMA_SCROLL);</span>
+<span class="nc" id="L45">        matrikelnummerField = new TextFieldWithIcon(matrikelnummerFieldBasic, user.getMatrikelnr(),matrikelnummerFieldLabel);</span>
+<span class="nc" id="L46">        HorizontalLayout body = this.setUp(user);</span>
+<span class="nc" id="L47">        this.addComponent(body);</span>
+<span class="nc" id="L48">    }</span>
+
+    public HorizontalLayout setUp(User user){
+<span class="nc" id="L51">        HorizontalLayout body = new HorizontalLayout();</span>
+<span class="nc" id="L52">        body.addStyleName(&quot;profile_container&quot;);</span>
+
+<span class="nc" id="L54">        VerticalLayout leftPane = new VerticalLayout();</span>
+<span class="nc" id="L55">        leftPane.setStyleName(&quot;profile_leftPane&quot;);</span>
+
+<span class="nc" id="L57">        VerticalLayout rightPane = new VerticalLayout();</span>
+<span class="nc" id="L58">        rightPane.addStyleName(&quot;profile_rightPane&quot;);</span>
+
+<span class="nc" id="L60">        HorizontalLayout addressContainerOne = new HorizontalLayout();</span>
+<span class="nc" id="L61">        addressContainerOne.setStyleName(&quot;profile_addressContrainerOne&quot;);</span>
+
+<span class="nc" id="L63">        HorizontalLayout addressContainerTwo = new HorizontalLayout();</span>
+<span class="nc" id="L64">        addressContainerTwo.setStyleName(&quot;profile_addressContrainerTwo&quot;);</span>
+
+<span class="nc" id="L66">        HorizontalLayout ibanUstidContainer = new HorizontalLayout();</span>
+<span class="nc" id="L67">        ibanUstidContainer.setStyleName(&quot;profile_ibanUstidContainer&quot;);</span>
+
+<span class="nc" id="L69">        VerticalLayout textContainerLeft = new VerticalLayout();</span>
+<span class="nc" id="L70">        textContainerLeft.setStyleName(&quot;profile_textContainerLeft&quot;);</span>
+
+<span class="nc" id="L72">        VerticalLayout textContainerRight = new VerticalLayout();</span>
+<span class="nc" id="L73">        textContainerRight.setStyleName(&quot;profile_textContainerRight&quot;);</span>
+
+<span class="nc" id="L75">        Label spacing = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L76">        Label spacing2 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L77">        Label spacing3 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L78">        Label spacing4 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+<span class="nc" id="L79">        Label spacing5 = new Label(&quot;&amp;nbsp&quot;, ContentMode.HTML);</span>
+
+<span class="nc" id="L81">        leftPane.addComponent(new ImageUpload(user));</span>
+
+<span class="nc" id="L83">        anredeSelect = new NativeSelect&lt;&gt;();</span>
+<span class="nc" id="L84">        anredeSelect.setItems(&quot;Herr&quot;, &quot;Frau&quot;, &quot;Diverse&quot;);</span>
+<span class="nc" id="L85">        anredeSelect.setValue(user.getAnrede());</span>
+<span class="nc" id="L86">        anredeSelect.setStyleName(&quot;profile_anrede&quot;);</span>
+
+<span class="nc" id="L88">        vornameFieldbasic = new TextField();</span>
+<span class="nc" id="L89">        vornameFieldLabel = new Label();</span>
+<span class="nc" id="L90">        vornameFieldLabel.setIcon(VaadinIcons.USER);</span>
+<span class="nc" id="L91">        vornameField = new TextFieldWithIcon(vornameFieldbasic, user.getVorname(), vornameFieldLabel);</span>
+
+
+<span class="nc" id="L94">        nachnameFieldbasic = new TextField();</span>
+<span class="nc" id="L95">        nachnameFieldLabel = new Label();</span>
+<span class="nc" id="L96">        nachnameFieldLabel.setIcon(VaadinIcons.USER);</span>
+<span class="nc" id="L97">        nachnameField = new TextFieldWithIcon(nachnameFieldbasic, user.getNachname(), nachnameFieldLabel);</span>
+
+
+
+<span class="nc" id="L101">        dateField = new DateField();</span>
+<span class="nc" id="L102">        dateField.setStyleName(&quot;profile_date&quot;);</span>
+<span class="nc" id="L103">        dateField.setValue(user.getGeburtsdatum());</span>
+<span class="nc" id="L104">        dateField.setValue(LocalDate.now());</span>
+
+<span class="nc" id="L106">        strasseFieldBasic = new TextField();</span>
+<span class="nc" id="L107">        strasseFieldlLabel = new Label();</span>
+<span class="nc" id="L108">        strasseFieldlLabel.setIcon(VaadinIcons.CAR);</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        strasseField = new TextFieldWithIcon(strasseFieldBasic, user.getAddress() == null ? &quot;&quot; : user.getAddress().getStreet(), strasseFieldlLabel);</span>
+
+<span class="nc" id="L111">        hausnummerFieldBasic = new TextField();</span>
+<span class="nc" id="L112">        hausnummerFieldLabel = new Label();</span>
+<span class="nc" id="L113">        hausnummerFieldLabel.setIcon(VaadinIcons.HOME);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        hausnummerField = new TextFieldWithIcon(hausnummerFieldBasic,user.getAddress() == null ? &quot;&quot; : &quot;&quot; + user.getAddress().getHausnummer(), hausnummerFieldLabel);</span>
+
+<span class="nc" id="L116">        plzFieldBasic = new TextField();</span>
+<span class="nc" id="L117">        plzFieldLabel = new Label();</span>
+<span class="nc" id="L118">        plzFieldLabel.setIcon(VaadinIcons.TAG);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        plzField = new TextFieldWithIcon(plzFieldBasic,user.getAddress() == null ? &quot;&quot; : user.getAddress().getPlz(), plzFieldLabel);</span>
+
+<span class="nc" id="L121">        ortFieldBasic = new TextField();</span>
+<span class="nc" id="L122">        ortFieldLabel = new Label();</span>
+<span class="nc" id="L123">        ortFieldLabel.setIcon(VaadinIcons.BUILDING);</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        ortField = new TextFieldWithIcon(ortFieldBasic,user.getAddress() == null ? &quot;&quot; : user.getAddress().getOrt(), ortFieldLabel);</span>
+
+<span class="nc" id="L126">        telefonnummerFieldBasic = new TextField();</span>
+<span class="nc" id="L127">        telefonnummerFieldLabel = new Label();</span>
+<span class="nc" id="L128">        telefonnummerFieldLabel.setIcon(VaadinIcons.PHONE);</span>
+<span class="nc" id="L129">        telefonnummerField = new TextFieldWithIcon(telefonnummerFieldBasic, user.getTelefon(), telefonnummerFieldLabel);</span>
+
+<span class="nc" id="L131">        textContainerLeft.addComponent(anredeSelect);</span>
+<span class="nc" id="L132">        textContainerLeft.addComponent(vornameField);</span>
+<span class="nc" id="L133">        textContainerLeft.addComponent(nachnameField);</span>
+<span class="nc" id="L134">        textContainerLeft.addComponent(dateField);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        textContainerLeft.addComponent(user instanceof Student ? matrikelnummerField : firmaField);</span>
+<span class="nc" id="L136">        addressContainerOne.addComponent(strasseField);</span>
+<span class="nc" id="L137">        addressContainerOne.addComponent(spacing);</span>
+<span class="nc" id="L138">        addressContainerOne.addComponent(hausnummerField);</span>
+<span class="nc" id="L139">        addressContainerTwo.addComponent(plzField);</span>
+<span class="nc" id="L140">        addressContainerTwo.addComponent(spacing2);</span>
+<span class="nc" id="L141">        addressContainerTwo.addComponent(ortField);</span>
+<span class="nc" id="L142">        textContainerRight.addComponent(addressContainerOne);</span>
+<span class="nc" id="L143">        textContainerRight.addComponent(addressContainerTwo);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if(!(user instanceof Student)) ibanUstidContainer.addComponent(ustIdField);</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if(!(user instanceof Student)) ibanUstidContainer.addComponent(spacing3);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if(!(user instanceof Student)) ibanUstidContainer.addComponent(ibanField);</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if(!(user instanceof Student)) textContainerRight.addComponent(ibanUstidContainer);</span>
+<span class="nc" id="L148">        textContainerRight.addComponent(telefonnummerField);</span>
+
+<span class="nc" id="L150">        leftPane.addComponent(textContainerLeft);</span>
+<span class="nc" id="L151">        rightPane.addComponent(textContainerRight);</span>
+
+<span class="nc" id="L153">        body.addComponent(leftPane);</span>
+<span class="nc" id="L154">        body.addComponent(rightPane);</span>
+<span class="nc" id="L155">        return body;</span>
+    }
+/*
+    public void setLogo(VerticalLayout pane){
+        Label usrBg = new Label();
+        usrBg.setStyleName(&quot;profile_usrbg&quot;);
+        usrBg.setIcon(VaadinIcons.USER);
+        pane.addComponent(usrBg);
+
+        Label kindOfUser = new Label(student != null ? &quot;Student&quot; : &quot;Unternehmer&quot;);
+        kindOfUser.setStyleName(&quot;profile_kindOfUser&quot;);
+        pane.addComponent(kindOfUser);
+    }*/
+
+    public NativeSelect&lt;String&gt; getAnredeSelect() {
+<span class="nc" id="L170">        return anredeSelect;</span>
+    }
+
+    public TextField getVornameFieldbasic() {
+<span class="nc" id="L174">        return vornameFieldbasic;</span>
+    }
+
+    public TextField getNachnameFieldbasic() {
+<span class="nc" id="L178">        return nachnameFieldbasic;</span>
+    }
+
+    public TextField getMatrikelnummerFieldBasic() {
+<span class="nc" id="L182">        return matrikelnummerFieldBasic;</span>
+    }
+
+    public TextField getFirmaFieldBasic() {
+<span class="nc" id="L186">        return firmaFieldBasic;</span>
+    }
+
+    public TextField getStrasseFieldBasic() {
+<span class="nc" id="L190">        return strasseFieldBasic;</span>
+    }
+
+    public TextField getHausnummerFieldBasic() {
+<span class="nc" id="L194">        return hausnummerFieldBasic;</span>
+    }
+
+    public TextField getPlzFieldBasic() {
+<span class="nc" id="L198">        return plzFieldBasic;</span>
+    }
+
+    public TextField getOrtFieldBasic() {
+<span class="nc" id="L202">        return ortFieldBasic;</span>
+    }
+
+    public TextField getTelefonnummerFieldBasic() {
+<span class="nc" id="L206">        return telefonnummerFieldBasic;</span>
+    }
+
+    public TextField getUstIdFieldBasic() {
+<span class="nc" id="L210">        return ustIdFieldBasic;</span>
+    }
+
+    public TextField getIbanFieldBasic() {
+<span class="nc" id="L214">        return ibanFieldBasic;</span>
+    }
+
+    public DateField getDateField() {
+<span class="nc" id="L218">        return dateField;</span>
+    }
+
+    public Label getVornameFieldLabel() {
+<span class="nc" id="L222">        return vornameFieldLabel;</span>
+    }
+
+    public Label getNachnameFieldLabel() {
+<span class="nc" id="L226">        return nachnameFieldLabel;</span>
+    }
+
+    public Label getAddresseLabel() {
+<span class="nc" id="L230">        return addresseLabel;</span>
+    }
+
+    public Label getMatrikelnummerFieldLabel() {
+<span class="nc" id="L234">        return matrikelnummerFieldLabel;</span>
+    }
+
+    public Label getFirmaFieldLabel() {
+<span class="nc" id="L238">        return firmaFieldLabel;</span>
+    }
+
+    public Label getStrasseFieldlLabel() {
+<span class="nc" id="L242">        return strasseFieldlLabel;</span>
+    }
+
+    public Label getHausnummerFieldLabel() {
+<span class="nc" id="L246">        return hausnummerFieldLabel;</span>
+    }
+
+    public Label getPlzFieldLabel() {
+<span class="nc" id="L250">        return plzFieldLabel;</span>
+    }
+
+    public Label getOrtFieldLabel() {
+<span class="nc" id="L254">        return ortFieldLabel;</span>
+    }
+
+    public Label getTelefonnummerFieldLabel() {
+<span class="nc" id="L258">        return telefonnummerFieldLabel;</span>
+    }
+
+    public Label getUstIdFieldlabel() {
+<span class="nc" id="L262">        return ustIdFieldlabel;</span>
+    }
+
+    public Label getIbanFieldLabel() {
+<span class="nc" id="L266">        return ibanFieldLabel;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

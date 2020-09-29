@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentBewirbtStellenAnzeigeDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">StudentBewirbtStellenAnzeigeDAO.java</span></div><h1>StudentBewirbtStellenAnzeigeDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DAOfetcherForStudUntBewerbtErstelltStellenanzeige;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L20">public class StudentBewirbtStellenAnzeigeDAO extends AbstractDAO {</span>
+    private static StudentBewirbtStellenAnzeigeDAO studentBewirbtStellenAnzeigeDAO;
+<span class="fc" id="L22">    private String table = DBTables.TAB_STUDENT_BEWIRBT_ST;</span>
+<span class="fc" id="L23">    private String view = DBViews.STUDENT_BEWIRBT_STELLENANZEIGE;</span>
+
+
+    public static StudentBewirbtStellenAnzeigeDAO getInstance() {
+
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (studentBewirbtStellenAnzeigeDAO == null) {</span>
+<span class="fc" id="L29">            studentBewirbtStellenAnzeigeDAO = new StudentBewirbtStellenAnzeigeDAO();</span>
+        }
+<span class="fc" id="L31">        return studentBewirbtStellenAnzeigeDAO;</span>
+    }
+
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;StellenAnzeige&gt; fetchStellenAnzeigeStudent(Student student) throws DatabaseException {
+
+<span class="fc" id="L39">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc" id="L41">        List&lt;StellenAnzeige&gt; stellenAnzeigeList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L42">        ResultSet resultSet = null;</span>
+
+        /*String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE student = '&quot; +
+                student.getMatrikelnr() + &quot;';&quot;;
+         */
+<span class="fc" id="L47">        String sqlBefehl = &quot;SELECT * FROM &quot; + view + &quot; WHERE student = ?;&quot;;</span>
+<span class="fc" id="L48">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L51">            statement.setString(1,student.getMatrikelnr());</span>
+<span class="nc" id="L52">        } catch (SQLException throwables) {</span>
+<span class="nc" id="L53">            Logger.getLogger(StudentBewirbtStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, throwables);</span>
+<span class="fc" id="L54">        }</span>
+<span class="fc" id="L55">        return DAOfetcherForStudUntBewerbtErstelltStellenanzeige.studUntDaoFetcher(statement, stellenAnzeigeList, &quot;student&quot;);</span>
+
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN -START -----------------------------------------------------------------------------
+
+    public void persistStudentBewirbtStellenanzeige(Student student, StellenAnzeige stellenAnzeige) throws DatabaseException {
+
+<span class="fc" id="L65">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if (stellenAnzeige.getId() == 0) {</span>
+<span class="nc" id="L68">            System.out.println(&quot;Diese StellenAnzeige gibt es nicht!&quot;);</span>
+<span class="nc" id="L69">            return;</span>
+        }
+
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if(connectionAlreadyExists(student, stellenAnzeige)) {</span>
+<span class="nc" id="L73">            System.out.println(&quot;Der Student hat sich auf diese Stellenanzeige schon beworben&quot;);</span>
+<span class="nc" id="L74">            return;</span>
+        }
+
+<span class="fc" id="L77">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?,default)&quot;;</span>
+<span class="fc" id="L78">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L81">            statement.setString(1, student.getMatrikelnr());</span>
+<span class="fc" id="L82">            statement.setInt(2, stellenAnzeige.getId());</span>
+<span class="nc" id="L83">            statement.executeUpdate();</span>
+
+<span class="nc" id="L85">            System.out.println(student.getUsername() + &quot; hat sich erfolgreich beworben!&quot;);</span>
+<span class="fc" id="L86">        } catch (SQLException e) {</span>
+<span class="fc" id="L87">            Logger.getLogger(StudentBewirbtStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L89">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L90">        }</span>
+<span class="fc" id="L91">    }</span>
+
+    // PERSISTMETHODEN  -END
+
+    // PRÜFMETHODEN -START ----------------------------------------------------------------------------------------------
+
+    private boolean connectionAlreadyExists(Student student, StellenAnzeige stellenAnzeige) {
+
+<span class="fc" id="L99">        String sqlBefehl = &quot;SELECT *  FROM &quot; + table + &quot; WHERE stellenanzeige = ? AND student = ?;&quot;;</span>
+<span class="fc" id="L100">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L101">        ResultSet resultSet = null;</span>
+<span class="fc" id="L102">        boolean exists = false;</span>
+
+        /*String sqlBefehl = &quot;SELECT *  FROM &quot; + table + &quot; WHERE stellenanzeige = '&quot; +
+                stellenAnzeige.getId()  + &quot;'&quot; +
+                &quot;AND student = '&quot; + student.getMatrikelnr() + &quot;';&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L111">            statement.setInt(1,stellenAnzeige.getId());</span>
+<span class="fc" id="L112">            statement.setString(2,student.getMatrikelnr());</span>
+<span class="fc" id="L113">            resultSet = statement.executeQuery();</span>
+<span class="fc" id="L114">            exists = resultSet.next();</span>
+<span class="nc" id="L115">        } catch (SQLException e) {</span>
+<span class="nc" id="L116">            Logger.getLogger(StudentBewirbtStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L118" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L119">        }</span>
+
+<span class="fc" id="L121">        return exists;</span>
+    }
+
+    // PRÜFMETHODEN -END
+    // SETTERMETHODEN -START -----------------------------------------------------------------------------------------------
+
+    public void changeStatus(Student student, StellenAnzeige stellenAnzeige, String status) throws DatabaseException {
+<span class="fc" id="L128">        JDBCConnection.getInstance().openConnection();</span>
+<span class="fc" id="L129">        String sqlBefehl = &quot;UPDATE &quot; + table + &quot; SET status = '&quot; + status + &quot;' WHERE student = '&quot; + student.getMatrikelnr() +</span>
+                &quot;' AND stellenanzeige = '&quot;
+<span class="fc" id="L131">                + stellenAnzeige.getId() + &quot;';&quot;;</span>
+<span class="fc" id="L132">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+        try {
+<span class="fc" id="L134">            statement.executeUpdate();</span>
+<span class="fc" id="L135">            System.out.println(&quot;Status geändert.&quot;);</span>
+<span class="nc" id="L136">        } catch (SQLException e) {</span>
+<span class="nc" id="L137">            Logger.getLogger(StudentBewirbtStellenAnzeigeDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L139">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc" id="L140">        }</span>
+<span class="fc" id="L141">    }</span>
+
+
+    // SETTERMETHODEN -END
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataBaseCreation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.services.db.databasecreation</a> &gt; <span class="el_source">DataBaseCreation.java</span></div><h1>DataBaseCreation.java</h1><pre class="source lang-java linenums">package org.mortys.services.db.databasecreation;
+
+
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+<span class="nc" id="L14">public abstract class DataBaseCreation {</span>
+
+
+    public static void createTable(String sqlBefehl) throws DatabaseException {
+
+<span class="nc" id="L19">        JDBCConnection.getInstance().openConnection();</span>
+<span class="nc" id="L20">        Statement statement = JDBCConnection.getInstance().getStatement();</span>
+
+        try {
+<span class="nc" id="L23">            statement.executeUpdate(sqlBefehl);</span>
+<span class="nc" id="L24">            System.out.println(&quot;Tabelle erfolgreich erstellt!&quot;);</span>
+<span class="nc" id="L25">        } catch (SQLException e) {</span>
+<span class="nc" id="L26">            Logger.getLogger(DataBaseCreation.class.getName()).log(Level.SEVERE, null, e);</span>
+<span class="nc" id="L27">            System.out.println(sqlBefehl);</span>
+        } finally {
+<span class="nc" id="L29">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L30">        }</span>
+
+<span class="nc" id="L32">    }</span>
+
+
+    public static void setUpAll() throws DatabaseException {
+
+        //Tables
+<span class="nc" id="L38">        createTable(DBTables.Creation.CREATE_TAB_ADRESSE);</span>
+<span class="nc" id="L39">        createTable(DBTables.Creation.CREATE_TAB_USER);</span>
+<span class="nc" id="L40">        createTable(DBTables.Creation.CREATE_TAB_UNTERNEHMER);</span>
+<span class="nc" id="L41">        createTable(DBTables.Creation.CREATE_TAB_STUDENT);</span>
+<span class="nc" id="L42">        createTable(DBTables.Creation.CREATE_TAB_STELLENANZEIGE);</span>
+<span class="nc" id="L43">        createTable(DBTables.Creation.CREATE_TAB_STUDENT_BEWIRBT_ST);</span>
+<span class="nc" id="L44">        createTable(DBTables.Creation.CREATE_TAB_FERTIGKEIT);</span>
+<span class="nc" id="L45">        createTable(DBTables.Creation.CREATE_TAB_ST_FORDERT_F);</span>
+<span class="nc" id="L46">        createTable(DBTables.Creation.CREATE_TAB_ST_HAT_F);</span>
+<span class="nc" id="L47">        createTable(DBTables.Creation.CREATE_TAB_U_ERSTELLT_ST);</span>
+<span class="nc" id="L48">        createTable(DBTables.Creation.CREATE_TAB_USER_HAT_RESETCODE);</span>
+<span class="nc" id="L49">        createTable(DBTables.Creation.CREATE_TAB_TOGGLE_CONFIGURATION);</span>
+
+        //Views
+<span class="nc" id="L52">        createTable(DBViews.Creation.CREATE_VIEW_ALL_STUDENTS);</span>
+<span class="nc" id="L53">        createTable(DBViews.Creation.CREATE_VIEW_ALL_UNTERNEHMER);</span>
+<span class="nc" id="L54">        createTable(DBViews.Creation.CREATE_VIEW_USER_HAS_ADDRESS);</span>
+<span class="nc" id="L55">        createTable(DBViews.Creation.CREATE_VIEW_STUDENT_HAT_FERTIGKEIT);</span>
+<span class="nc" id="L56">        createTable(DBViews.Creation.CREATE_VIEW_STELLENANZEIGE_FORDERT_FERTIGKEIT);</span>
+<span class="nc" id="L57">        createTable(DBViews.Creation.CREATE_VIEW_UNTERNEHMER_ERSTELLT_STELLENANZEIGE);</span>
+<span class="nc" id="L58">        createTable(DBViews.Creation.CREATE_VIEW_STUDENT_BEWIRBT_STELLENANZEIGE);</span>
+
+
+<span class="nc" id="L61">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentHatFertigkeitDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.model.dao</a> &gt; <span class="el_source">StudentHatFertigkeitDAO.java</span></div><h1>StudentHatFertigkeitDAO.java</h1><pre class="source lang-java linenums">package org.mortys.model.dao;
+
+import org.mortys.model.objects.dto.Fertigkeit;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.services.db.JDBCConnection;
+import org.mortys.services.util.DBTables;
+import org.mortys.services.util.DBViews;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+<span class="fc" id="L19">public class StudentHatFertigkeitDAO extends AbstractDAO {</span>
+    private static StudentHatFertigkeitDAO studentHatFertigkeitDAO;
+<span class="fc" id="L21">    private String table = DBTables.TAB_ST_HAT_F;</span>
+<span class="fc" id="L22">    private String view = DBViews.STUDENT_HAT_FERTIGKEIT;</span>
+
+    public static StudentHatFertigkeitDAO getInstance() {
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (studentHatFertigkeitDAO == null) studentHatFertigkeitDAO = new StudentHatFertigkeitDAO();</span>
+
+<span class="fc" id="L28">        return studentHatFertigkeitDAO;</span>
+    }
+
+    // FETCHMETHODEN (LADEMETHODEN) -START -----------------------------------------------------------------------------
+
+    public List&lt;Fertigkeit&gt; fetchFertigkeitforStudent(String matrikelnummer) throws DatabaseException {
+
+<span class="fc" id="L35">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="fc" id="L37">        List&lt;Fertigkeit&gt; fertigkeitList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L39">        String sqlBefehl = &quot;SELECT * FROM &quot; + table  + &quot; shf, &quot; + DBTables.TAB_FERTIGKEIT + &quot; f, &quot; + DBTables.TAB_STUDENT + &quot; s &quot;  + &quot; WHERE matrikelnr = ? and shf.student = s.matrikelnr and shf.fertigkeit = f.nr;&quot;;</span>
+
+<span class="fc" id="L41">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+<span class="fc" id="L42">        ResultSet resultSet = null;</span>
+
+        /*String sqlBefehl = &quot;SELECT * FROM &quot; + table  + &quot; shf, &quot; + DBTables.TAB_FERTIGKEIT + &quot; f, &quot; + DBTables.TAB_STUDENT + &quot; s &quot;  + &quot; WHERE matrikelnr = '&quot; +
+                            matrikelnummer + &quot;' and shf.student = s.matrikelnr and shf.fertigkeit = f.nr;&quot;;
+
+         */
+
+        try {
+<span class="fc" id="L50">            statement.setString(1,matrikelnummer);</span>
+<span class="fc" id="L51">            resultSet = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L54">                Fertigkeit fertigkeit = new Fertigkeit();</span>
+<span class="fc" id="L55">                fertigkeit.setSoftskill(resultSet.getString(&quot;softskill&quot;));</span>
+<span class="fc" id="L56">                fertigkeit.setBeschreibung(resultSet.getString(&quot;Beschreibung&quot;));</span>
+
+<span class="fc" id="L58">                fertigkeitList.add(fertigkeit);</span>
+<span class="fc" id="L59">            }</span>
+
+<span class="nc" id="L61">        } catch (SQLException e) {</span>
+<span class="nc" id="L62">            Logger.getLogger(StudentHatFertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc" id="L64">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="pc bpc" id="L65" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L66">        }</span>
+<span class="fc" id="L67">        return fertigkeitList;</span>
+    }
+    // FETCHMETHODEN (LADEMETHODEN) -END
+
+    // PERSISTMETHODEN -START -----------------------------------------------------------------------------
+
+    public void persistStudentHatFertigkeit(Student student, Fertigkeit fertigkeit) throws DatabaseException {
+<span class="fc" id="L74">        JDBCConnection.getInstance().openConnection();</span>
+
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (connectionAlreadyExists(student, fertigkeit)) {</span>
+<span class="fc" id="L77">            System.out.println(&quot;Fertigkeit wurde bereits zugewiesen!&quot;);</span>
+<span class="fc" id="L78">             return;</span>
+        }
+
+<span class="nc" id="L81">        String sqlBefehl = &quot;INSERT INTO &quot; + table + &quot; VALUES(?,?)&quot;;</span>
+<span class="nc" id="L82">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="nc" id="L85">            statement.setString(1, student.getMatrikelnr());</span>
+<span class="nc" id="L86">            int fertigkeitId = FertigkeitDAO.getInstance().persistFertigkeit(fertigkeit);</span>
+<span class="nc" id="L87">            statement.setInt(2, fertigkeitId);</span>
+<span class="nc" id="L88">            statement.executeUpdate();</span>
+
+<span class="nc" id="L90">            System.out.println(&quot;Fertigkeit neu angelegt!&quot;);</span>
+<span class="nc" id="L91">        } catch (SQLException e) {</span>
+<span class="nc" id="L92">            Logger.getLogger(StudentHatFertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="nc" id="L94">            JDBCConnection.getInstance().closeConnection();</span>
+<span class="nc" id="L95">        }</span>
+
+<span class="nc" id="L97">    }</span>
+
+    // PERSISTMETHODEN  -END
+
+
+
+
+    // PRÜFMETHODEN -START ----------------------------------------------------------------------------------------------
+
+
+    public boolean connectionAlreadyExists( Student student, Fertigkeit fertigkeit) {
+
+<span class="fc" id="L109">        ResultSet resultSet = null;</span>
+<span class="fc" id="L110">        boolean exists = false;</span>
+
+        /*String preSelection = &quot;(SELECT * FROM &quot; + table  + &quot; shf, &quot; + DBTables.TAB_FERTIGKEIT + &quot; f, &quot; + DBTables.TAB_STUDENT + &quot; s &quot;  + &quot; WHERE matrikelnr = '&quot; +
+                student.getMatrikelnr() + &quot;' and shf.student = s.matrikelnr and shf.fertigkeit = f.nr) v&quot;;
+
+
+        String sqlBefehl =  &quot;SELECT fertigkeit  FROM &quot; + preSelection + &quot; WHERE matrikelnr = '&quot; + student.getMatrikelnr() + &quot;'&quot; +
+                &quot;AND fertigkeit = '&quot; + FertigkeitDAO.getInstance().getFertigkeitId(fertigkeit) + &quot;';&quot;;
+
+         */
+
+<span class="fc" id="L121">        String preSelection = &quot;(SELECT * FROM &quot; + table  + &quot; shf, &quot; + DBTables.TAB_FERTIGKEIT + &quot; f, &quot; + DBTables.TAB_STUDENT + &quot; s &quot;  + &quot; WHERE matrikelnr = ? and shf.student = s.matrikelnr and shf.fertigkeit = f.nr) v&quot;;</span>
+
+
+<span class="fc" id="L124">        String sqlBefehl =  &quot;SELECT fertigkeit  FROM &quot; + preSelection + &quot; WHERE matrikelnr = ?&quot; +</span>
+                &quot;AND fertigkeit = ?;&quot;;
+
+<span class="fc" id="L127">        PreparedStatement statement = getPreparedStatement(sqlBefehl);</span>
+
+        try {
+<span class="fc" id="L130">            statement.setString(1,student.getMatrikelnr());</span>
+<span class="fc" id="L131">            statement.setString(2,student.getMatrikelnr());</span>
+<span class="fc" id="L132">            statement.setInt(3,FertigkeitDAO.getInstance().getFertigkeitId(fertigkeit));</span>
+<span class="fc" id="L133">            resultSet = statement.executeQuery();</span>
+<span class="fc" id="L134">            exists = resultSet.next();</span>
+<span class="nc" id="L135">        } catch (SQLException e) {</span>
+<span class="nc" id="L136">            Logger.getLogger(StudentHatFertigkeitDAO.class.getName()).log(Level.SEVERE, null, e);</span>
+        } finally {
+<span class="pc bpc" id="L138" title="5 of 6 branches missed.">            try { if (resultSet != null) resultSet.close(); } catch (Exception exc) { }</span>
+<span class="nc" id="L139">        }</span>
+
+<span class="fc" id="L141">        return exists;</span>
+    }
+
+    // PRÜFMETHODEN -END
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

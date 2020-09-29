@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegistrationView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.gui.views</a> &gt; <span class="el_source">RegistrationView.java</span></div><h1>RegistrationView.java</h1><pre class="source lang-java linenums">package org.mortys.gui.views;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.shared.ui.ValueChangeMode;
+import com.vaadin.ui.*;
+import org.mortys.gui.components.Footer;
+import org.mortys.gui.components.Header;
+import org.mortys.gui.components.TextFieldWithIcon;
+import org.mortys.gui.windows.RegistrationSuccessWindow;
+import org.mortys.model.dao.UserDAO;
+import org.mortys.model.objects.dto.User;
+import org.mortys.model.objects.dto.UserDTO;
+import org.mortys.process.control.RegistrationControl;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.exception.RegisterFailException;
+import org.mortys.services.util.Roles;
+
+import java.util.regex.Pattern;
+
+public class RegistrationView extends VerticalLayout implements View {
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+<span class="nc" id="L27">        User user = (User) UI.getCurrent().getSession().getAttribute(Roles.CURRENT_USER);</span>
+
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        if (user == null) this.setUp();</span>
+<span class="nc" id="L30">    }</span>
+
+<span class="nc" id="L32">    public RegistrationView() {</span>
+<span class="nc" id="L33">    }</span>
+
+    ;
+
+    public void setUp() {
+
+        //Style setup
+
+<span class="nc" id="L41">        addComponent(new Header(false));</span>
+
+<span class="nc" id="L43">        this.setStyleName(&quot;layout_loginRegister&quot;);</span>
+<span class="nc" id="L44">        HorizontalLayout body = new HorizontalLayout();</span>
+<span class="nc" id="L45">        body.addStyleName(&quot;login_container&quot;);</span>
+
+<span class="nc" id="L47">        VerticalLayout leftPage = new VerticalLayout();</span>
+<span class="nc" id="L48">        leftPage.setStyleName(&quot;login_leftPane&quot;);</span>
+<span class="nc" id="L49">        Label pageLogo = new Label();</span>
+<span class="nc" id="L50">        pageLogo.setStyleName(&quot;login_pageLogo&quot;);</span>
+<span class="nc" id="L51">        leftPage.addComponent(pageLogo);</span>
+<span class="nc" id="L52">        Label title = new Label(&quot;Registration&quot;);</span>
+<span class="nc" id="L53">        title.setStyleName(&quot;registration_title&quot;);</span>
+<span class="nc" id="L54">        leftPage.addComponent(title);</span>
+
+<span class="nc" id="L56">        Label icon = new Label(&quot;&quot;);</span>
+<span class="nc" id="L57">        icon.setIcon(VaadinIcons.WRENCH);</span>
+<span class="nc" id="L58">        icon.setStyleName(&quot;register_icon&quot;);</span>
+<span class="nc" id="L59">        leftPage.addComponent(icon);</span>
+
+
+<span class="nc" id="L62">        VerticalLayout rightPane = new VerticalLayout();</span>
+<span class="nc" id="L63">        rightPane.addStyleName(&quot;register_rightPane&quot;);</span>
+
+<span class="nc" id="L65">        TextField emailField = new TextField();</span>
+<span class="nc" id="L66">        emailField.setId(&quot;emailField&quot;);</span>
+<span class="nc" id="L67">        Label emailFieldLabel = new Label();</span>
+<span class="nc" id="L68">        emailFieldLabel.setIcon(VaadinIcons.ENVELOPE_O);</span>
+<span class="nc" id="L69">        TextFieldWithIcon email = new TextFieldWithIcon(emailField, &quot;email&quot;, emailFieldLabel);</span>
+
+
+<span class="nc" id="L72">        TextField usernameField = new TextField();</span>
+<span class="nc" id="L73">        usernameField.setId(&quot;usernameField&quot;);</span>
+<span class="nc" id="L74">        Label usernameFieldLabel = new Label();</span>
+<span class="nc" id="L75">        usernameFieldLabel.setIcon(VaadinIcons.USER);</span>
+<span class="nc" id="L76">        TextFieldWithIcon username = new TextFieldWithIcon(usernameField, &quot;username&quot;, usernameFieldLabel);</span>
+
+
+<span class="nc" id="L79">        PasswordField passwordField = new PasswordField();</span>
+<span class="nc" id="L80">        passwordField.setId(&quot;passwordField&quot;);</span>
+<span class="nc" id="L81">        Label passwordFieldLabel = new Label();</span>
+<span class="nc" id="L82">        passwordFieldLabel.setIcon(VaadinIcons.PASSWORD);</span>
+<span class="nc" id="L83">        TextFieldWithIcon password = new TextFieldWithIcon(passwordField, &quot;password&quot;, passwordFieldLabel);</span>
+
+<span class="nc" id="L85">        PasswordField validatePasswordField = new PasswordField();</span>
+<span class="nc" id="L86">        validatePasswordField.setId(&quot;validateField&quot;);</span>
+<span class="nc" id="L87">        Label validatepasswordFieldLabel = new Label();</span>
+<span class="nc" id="L88">        validatepasswordFieldLabel.setIcon(VaadinIcons.PASSWORD);</span>
+<span class="nc" id="L89">        TextFieldWithIcon validatePassword = new TextFieldWithIcon(validatePasswordField, &quot; repeat password&quot;, validatepasswordFieldLabel);</span>
+
+
+<span class="nc" id="L92">        CheckBox isStudent = new CheckBox();</span>
+<span class="nc" id="L93">        isStudent.setCaption(&quot;Student&quot;);</span>
+<span class="nc" id="L94">        isStudent.setId(&quot;studentCheck&quot;);</span>
+<span class="nc" id="L95">        CheckBox isUnternehmer = new CheckBox();</span>
+<span class="nc" id="L96">        isUnternehmer.setCaption(&quot;Unternehmer&quot;);</span>
+<span class="nc" id="L97">        isUnternehmer.setId(&quot;unternehmerCheck&quot;);</span>
+<span class="nc" id="L98">        HorizontalLayout checkBoxWrapper = new HorizontalLayout(isStudent, isUnternehmer);</span>
+<span class="nc" id="L99">        checkBoxWrapper.setStyleName(&quot;register_rightPane_checkBox&quot;);</span>
+<span class="nc" id="L100">        checkBoxWrapper.setWidth(&quot;250px&quot;);</span>
+<span class="nc" id="L101">        checkBoxWrapper.setComponentAlignment(isUnternehmer, Alignment.MIDDLE_RIGHT);</span>
+<span class="nc" id="L102">        checkBoxWrapper.setComponentAlignment(isStudent, Alignment.MIDDLE_LEFT);</span>
+
+
+<span class="nc" id="L105">        Button registerButton = new Button(&quot;Register&quot;);</span>
+<span class="nc" id="L106">        registerButton.setStyleName(&quot;login_button&quot;);</span>
+<span class="nc" id="L107">        registerButton.setId(&quot;registerButton&quot;);</span>
+<span class="nc" id="L108">        rightPane.addComponents(email, username, password, validatePassword, checkBoxWrapper);</span>
+
+<span class="nc" id="L110">        body.addComponent(leftPage);</span>
+
+<span class="nc" id="L112">        body.addComponent(rightPane);</span>
+
+<span class="nc" id="L114">        this.addComponent(body);</span>
+<span class="nc" id="L115">        this.addComponent(new Footer());</span>
+
+<span class="nc" id="L117">        TextField matrField = new TextField();</span>
+<span class="nc" id="L118">        matrField.setId(&quot;matrField&quot;);</span>
+<span class="nc" id="L119">        Label matrFieldLabel = new Label();</span>
+<span class="nc" id="L120">        matrFieldLabel.setIcon(VaadinIcons.CHECK_CIRCLE_O);</span>
+<span class="nc" id="L121">        TextFieldWithIcon matrnr = new TextFieldWithIcon(matrField, &quot;Matrikelnummer&quot;, matrFieldLabel);</span>
+
+<span class="nc" id="L123">        TextField firmaField = new TextField();</span>
+<span class="nc" id="L124">        firmaField.setId(&quot;firmaField&quot;);</span>
+<span class="nc" id="L125">        Label firmaFieldLabel = new Label();</span>
+<span class="nc" id="L126">        firmaFieldLabel.setIcon(VaadinIcons.CHECK_CIRCLE_O);</span>
+<span class="nc" id="L127">        TextFieldWithIcon firma = new TextFieldWithIcon(firmaField, &quot;Firma&quot;, firmaFieldLabel);</span>
+
+
+        //Component Logic
+
+<span class="nc" id="L132">        isStudent.addValueChangeListener(e -&gt; {</span>
+
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (isStudent.getValue()) {</span>
+
+<span class="nc" id="L137">                isUnternehmer.setValue(false);</span>
+<span class="nc" id="L138">                rightPane.addComponent(matrnr);</span>
+<span class="nc" id="L139">                rightPane.addComponent(registerButton);</span>
+            } else {
+<span class="nc" id="L141">                rightPane.removeComponent(matrnr);</span>
+<span class="nc" id="L142">                rightPane.removeComponent(registerButton);</span>
+            }
+
+
+<span class="nc" id="L146">        });</span>
+
+
+<span class="nc" id="L149">        isUnternehmer.addValueChangeListener(e -&gt; {</span>
+
+
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (isUnternehmer.getValue()) {</span>
+
+<span class="nc" id="L154">                isStudent.setValue(false);</span>
+<span class="nc" id="L155">                rightPane.addComponents(firma);</span>
+<span class="nc" id="L156">                rightPane.addComponent(registerButton);</span>
+
+            } else {
+<span class="nc" id="L159">                rightPane.removeComponent(firma);</span>
+<span class="nc" id="L160">                rightPane.removeComponent(registerButton);</span>
+
+            }
+
+
+<span class="nc" id="L165">        });</span>
+
+<span class="nc" id="L167">        registerButton.addClickListener(e -&gt; {</span>
+<span class="nc" id="L168">            UserDTO userDTO = new UserDTO();</span>
+<span class="nc" id="L169">            userDTO.setEmail(emailField.getValue().toLowerCase());</span>
+<span class="nc" id="L170">            userDTO.setUsername(usernameField.getValue());</span>
+<span class="nc" id="L171">            userDTO.setPassword(passwordField.getValue());</span>
+<span class="nc" id="L172">            userDTO.setUnternehmer(isUnternehmer.getValue());</span>
+
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if (userDTO.isUnternehmer()) {</span>
+<span class="nc" id="L175">                userDTO.setFirma(firmaField.getValue());</span>
+            } else {
+<span class="nc" id="L177">                userDTO.setMatrnr(matrField.getValue());</span>
+            }
+
+            //
+            try {
+<span class="nc" id="L182">                boolean erfolg = RegistrationControl.register(userDTO);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                if (erfolg) {</span>
+<span class="nc" id="L184">                    RegistrationSuccessWindow registrationSuccessWindow = new RegistrationSuccessWindow(usernameField.getValue());</span>
+<span class="nc" id="L185">                    UI.getCurrent().addWindow(registrationSuccessWindow);</span>
+                }
+<span class="nc" id="L187">            } catch (DatabaseException databaseException) {</span>
+<span class="nc" id="L188">                Notification.show(null, databaseException.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L189">            } catch (RegisterFailException registerFailException) {</span>
+<span class="nc" id="L190">                Notification.show(null, registerFailException.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L191">            }</span>
+
+
+<span class="nc" id="L194">        });</span>
+
+        // Built in ERROR's
+
+<span class="nc" id="L198">        Label errorWarningEmail = new Label(&quot;Bitte geben sie eine korrekte Email ein.&quot;);</span>
+<span class="nc" id="L199">        errorWarningEmail.setStyleName(&quot;errorwarning einzeiler&quot;);</span>
+
+<span class="nc" id="L201">        Label errorWarningUsername = new Label(&quot;Der Username ist schon vergeben, bitte wählen Sie einen anderen&quot;);</span>
+<span class="nc" id="L202">        errorWarningUsername.setStyleName(&quot;errorwarning zweizeiler&quot;);</span>
+
+<span class="nc" id="L204">        Label errorWarningPassword = new Label(&quot;Ihre Eingaben stimmen nicht überein.&quot;);</span>
+<span class="nc" id="L205">        errorWarningPassword.setStyleName(&quot;errorwarning einzeiler&quot;);</span>
+
+
+        //TEXTFIELDLISTENERS
+
+<span class="nc" id="L210">        emailField.addBlurListener(e -&gt; {</span>
+<span class="nc bnc" id="L211" title="All 4 branches missed.">            if (!isValid(emailField.getValue()) &amp;&amp; !emailField.getValue().isEmpty()) {</span>
+<span class="nc" id="L212">                rightPane.addComponent(errorWarningEmail, rightPane.getComponentIndex(email));</span>
+<span class="nc" id="L213">                registerButton.setEnabled(false);</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">            } else if (errorWarningEmail.isAttached()) {</span>
+<span class="nc" id="L215">                rightPane.removeComponent(errorWarningEmail);</span>
+            }
+<span class="nc" id="L217">        });</span>
+
+
+<span class="nc" id="L220">        usernameField.addValueChangeListener(e -&gt; {</span>
+
+            try {
+<span class="nc" id="L223">                boolean usernameAlreadyUsed = UserDAO.getInstance().usernameIsAlreadyInUse(usernameField.getValue());</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                if (usernameAlreadyUsed) {</span>
+<span class="nc" id="L225">                    rightPane.addComponent(errorWarningUsername, rightPane.getComponentIndex(username));</span>
+<span class="nc" id="L226">                    registerButton.setEnabled(false);</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                } else if (errorWarningUsername.isAttached()) {</span>
+<span class="nc" id="L228">                    rightPane.removeComponent(errorWarningUsername);</span>
+                }
+<span class="nc" id="L230">            } catch (DatabaseException databaseException) {</span>
+<span class="nc" id="L231">                Notification.show(null, databaseException.getReason(), Notification.Type.ERROR_MESSAGE);</span>
+<span class="nc" id="L232">            }</span>
+<span class="nc" id="L233">        });</span>
+
+<span class="nc" id="L235">        usernameField.setValueChangeMode(ValueChangeMode.LAZY);</span>
+
+
+<span class="nc" id="L238">        validatePasswordField.addBlurListener(e -&gt; {</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            if (!passwordField.getValue().equals(validatePasswordField.getValue())) {</span>
+<span class="nc" id="L240">                rightPane.addComponent(errorWarningPassword, rightPane.getComponentIndex(validatePassword));</span>
+<span class="nc" id="L241">                registerButton.setEnabled(false);</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            } else if (errorWarningPassword.isAttached()) {</span>
+<span class="nc" id="L243">                rightPane.removeComponent(errorWarningPassword);</span>
+
+            }
+<span class="nc" id="L246">        });</span>
+<span class="nc" id="L247">        validatePasswordField.setValueChangeMode(ValueChangeMode.LAZY);</span>
+
+
+        // Enable RegisterButton Just if there are no errors
+<span class="nc" id="L251">        rightPane.addComponentDetachListener(e -&gt; {</span>
+<span class="nc bnc" id="L252" title="All 4 branches missed.">            if (rightPane.getComponentIndex(errorWarningEmail) == -1 &amp;&amp; rightPane.getComponentIndex(errorWarningUsername) == -1</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                    &amp;&amp; rightPane.getComponentIndex(errorWarningPassword) == -1) {</span>
+<span class="nc" id="L254">                registerButton.setEnabled(true);</span>
+            }
+<span class="nc" id="L256">        });</span>
+
+
+<span class="nc" id="L259">    }</span>
+
+
+    public static boolean isValid(String email) {
+<span class="nc" id="L263">        String emailRegex = &quot;^[a-zA-Z0-9_+&amp;*-]+(?:\\.&quot; +</span>
+                &quot;[a-zA-Z0-9_+&amp;*-]+)*@&quot; +
+                &quot;(?:[a-zA-Z0-9-]+\\.)+[a-z&quot; +
+                &quot;A-Z]{2,7}$&quot;;
+
+<span class="nc" id="L268">        Pattern pat = Pattern.compile(emailRegex);</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (email == null)</span>
+<span class="nc" id="L270">            return false;</span>
+<span class="nc" id="L271">        return pat.matcher(email).matches();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

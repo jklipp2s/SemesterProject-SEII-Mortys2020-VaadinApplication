@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SearchControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mortys</a> &gt; <a href="index.source.html" class="el_package">org.mortys.process.control</a> &gt; <span class="el_source">SearchControl.java</span></div><h1>SearchControl.java</h1><pre class="source lang-java linenums">package org.mortys.process.control;
+
+import org.mortys.model.objects.dto.StellenAnzeige;
+import org.mortys.model.objects.dto.Student;
+import org.mortys.process.control.exception.DatabaseException;
+import org.mortys.process.control.proxy.SearchInstance;
+import org.mortys.process.control.proxy.SearchProxy;
+
+import java.util.List;
+<span class="fc" id="L10">public class SearchControl implements SearchInstance {</span>
+    private static SearchControl searchControl;
+
+    public static SearchControl getInstance(){
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        if(searchControl == null) searchControl = new SearchControl();</span>
+<span class="fc" id="L15">        return searchControl;</span>
+    }
+
+    public  List&lt;StellenAnzeige&gt; searchStellenAnzeigen(String stellenanzeige , String ort) throws DatabaseException {
+<span class="fc" id="L19">        return SearchProxy.getInstance().searchStellenAnzeigen(stellenanzeige , ort);</span>
+    }
+
+    public  List&lt;Student&gt; searchStellenStudenten(String student , String ort, String beschaeftigung, String faehigkteiten) throws DatabaseException {
+<span class="fc" id="L23">        return SearchProxy.getInstance().searchStellenStudenten(student, ort, beschaeftigung, faehigkteiten);</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
